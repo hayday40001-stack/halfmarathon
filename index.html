@@ -1,0 +1,2197 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#FBF6EF" />
+<title>ภารกิจพิชิตฮาฟมาราธอน</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ==========================================================
+     Cute Minimal Running Planner — warm theme
+     ========================================================== */
+  :root{
+    color-scheme: light;
+    --bg:#FBF6EF;
+    --surface:#FFFFFF;
+    --surface-2:#FAF3EA;
+    --line:#EFE4D7;
+    --text:#3A2E28;
+    --muted:#8A796E;
+    --faint:#B9AA9E;
+
+    --primary:#D9714E;         /* terracotta */
+    --primary-strong:#B5563A;  /* ปุ่ม/ตัวอักษรบนพื้นขาว */
+    --primary-soft:#FBE8DF;
+    --honey:#EEB54B;
+    --honey-soft:#FDF2DA;
+    --sage:#7FAE92;
+    --sage-strong:#437A5B;
+    --sage-soft:#E6F2EA;
+    --rose-soft:#F7DDE2;
+
+    /* สีประจำประเภทภารกิจ */
+    --easy:#7FAE92;     --easy-soft:#E8F3EC;
+    --tempo:#7C9FD0;    --tempo-soft:#E9F0FA;
+    --interval:#EEB54B; --interval-soft:#FDF3DC;
+    --long:#D9714E;     --long-soft:#FBE9E1;
+    --race:#D65A74;     --race-soft:#FBE4EA;
+    --rest:#CDBFB2;     --rest-soft:#F4EEE7;
+
+    --r-xl:28px; --r-lg:22px; --r-md:16px; --r-sm:12px; --r-pill:999px;
+    --shadow-sm:0 1px 2px rgba(90,60,40,.05), 0 2px 8px rgba(90,60,40,.04);
+    --shadow:0 1px 3px rgba(90,60,40,.05), 0 10px 28px rgba(90,60,40,.07);
+    --shadow-lg:0 16px 40px rgba(90,60,40,.16);
+    --ease:cubic-bezier(.2,.8,.2,1);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Prompt', system-ui, -apple-system, sans-serif;
+    font-weight:400;
+    font-size:15px;
+    line-height:1.5;
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    -webkit-tap-highlight-color:transparent;
+  }
+  button{font-family:inherit;cursor:pointer;color:inherit;}
+  h1,h2,h3,p{margin:0;}
+  .hidden{display:none !important;}
+  :focus-visible{outline:3px solid rgba(217,113,78,.35);outline-offset:2px;}
+  .num{font-variant-numeric:tabular-nums;}
+
+  /* ---------- Header ---------- */
+  .topbar{max-width:1080px;margin:0 auto;padding:18px 16px 4px;}
+  .topbar-row{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .brand{display:flex;align-items:center;gap:12px;min-width:0;}
+  .brand-logo{
+    width:46px;height:46px;flex:none;border-radius:16px;
+    background:var(--primary-soft);display:grid;place-items:center;font-size:24px;
+  }
+  .brand-logo span{display:inline-block;transform:scaleX(-1);}
+  .brand h1{font-size:17px;font-weight:600;line-height:1.3;}
+  .brand p{font-size:12.5px;color:var(--muted);}
+  .header-actions{display:flex;gap:8px;flex:none;}
+  .icon-btn{
+    width:42px;height:42px;border-radius:50%;
+    border:1px solid var(--line);background:var(--surface);box-shadow:var(--shadow-sm);
+    font-size:17px;display:grid;place-items:center;
+    transition:transform .15s var(--ease), background .15s;
+  }
+  .icon-btn:hover{background:var(--surface-2);}
+  .icon-btn:active{transform:scale(.92);}
+
+  .race-card{
+    margin-top:16px;
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);
+    box-shadow:var(--shadow-sm);
+    padding:14px 16px;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  }
+  .race-eyebrow{font-size:12px;color:var(--muted);}
+  .race-date{font-size:15px;font-weight:600;margin-top:1px;}
+  .countdown-nums{flex:1 1 250px;max-width:340px;display:grid;grid-template-columns:repeat(4, minmax(0,1fr));gap:6px;}
+  @media (max-width:520px){.countdown-nums{max-width:none;}}
+  .countdown-unit{
+    background:var(--surface-2);border-radius:var(--r-sm);
+    padding:6px 4px;text-align:center;
+  }
+  .countdown-unit b{display:block;font-size:19px;font-weight:600;line-height:1.2;color:var(--primary-strong);font-variant-numeric:tabular-nums;}
+  .countdown-unit span{font-size:10.5px;color:var(--muted);}
+
+  /* ---------- Layout ---------- */
+  .layout{
+    max-width:1080px;margin:0 auto;padding:14px 16px 40px;
+    display:flex;flex-direction:column;gap:14px;
+  }
+  .col{display:contents;}
+  #todayMissionWrap{order:1;}
+  .stats-bar{order:2;}
+  .progress-card{order:3;}
+  .plan-section{order:4;}
+  .heatmap-card{order:5;}
+  .badges-card{order:6;}
+
+  @media (min-width:960px){
+    .topbar{padding-top:28px;}
+    .race-card{padding:16px 20px;}
+    .layout{
+      display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start;
+      padding-top:20px;
+    }
+    .col{display:flex;flex-direction:column;gap:16px;min-width:0;}
+  }
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--r-lg);
+    box-shadow:var(--shadow-sm);
+    padding:18px;
+  }
+  .sec-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;}
+  .sec-title{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600;}
+  .sec-ico{
+    width:32px;height:32px;border-radius:11px;background:var(--surface-2);
+    display:grid;place-items:center;font-size:16px;flex:none;
+  }
+  .sec-sub{font-size:12px;color:var(--muted);font-weight:400;}
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    border:none;border-radius:var(--r-pill);padding:12px 18px;
+    font-size:15px;font-weight:500;line-height:1.2;
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    transition:transform .12s var(--ease), background .15s, box-shadow .15s;
+  }
+  .btn:active{transform:scale(.97);}
+  .btn-primary{background:var(--primary-strong);color:#fff;box-shadow:0 6px 16px rgba(181,86,58,.25);}
+  .btn-primary:hover{background:#A34C32;}
+  .btn-primary.done{background:var(--sage-soft);color:var(--sage-strong);box-shadow:none;}
+  .btn-secondary{background:var(--primary-soft);color:var(--primary-strong);}
+  .btn-outline{background:var(--surface);color:var(--text);border:1px solid var(--line);}
+  .btn-outline:hover{background:var(--surface-2);}
+  .btn-danger{background:#FBE3E6;color:#A8364B;}
+  .btn-block{width:100%;}
+  .btn-sm{padding:8px 14px;font-size:13px;}
+  .btn[disabled]{opacity:.55;cursor:default;}
+  .link-btn{
+    background:none;border:none;color:var(--primary-strong);
+    font-size:13px;font-weight:500;padding:6px 2px;
+  }
+  .pill-btn{
+    border:1px solid var(--line);background:var(--surface);color:var(--text);
+    border-radius:var(--r-pill);padding:8px 14px;font-size:13px;font-weight:500;
+    display:inline-flex;align-items:center;gap:6px;
+    transition:background .15s, transform .12s var(--ease);
+  }
+  .pill-btn:hover{background:var(--surface-2);}
+  .pill-btn:active{transform:scale(.96);}
+  .pill-btn.accent{background:var(--primary-soft);border-color:transparent;color:var(--primary-strong);}
+
+  /* ---------- Today mission ---------- */
+  .mission{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--r-xl);
+    box-shadow:var(--shadow);overflow:hidden;
+  }
+  .mission-top{padding:18px 18px 20px;}
+  .mission-eyebrow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:16px;}
+  .mission-eyebrow h2{font-size:13px;font-weight:500;color:var(--muted);letter-spacing:.2px;}
+  .date-pill{font-size:12px;background:rgba(255,255,255,.75);border-radius:var(--r-pill);padding:4px 10px;color:var(--muted);}
+  .mission-main{display:flex;gap:14px;align-items:center;}
+  .mission-icon{
+    width:60px;height:60px;border-radius:20px;background:var(--surface);
+    display:grid;place-items:center;font-size:30px;flex:none;box-shadow:var(--shadow-sm);
+  }
+  .type-pill{
+    display:inline-block;font-size:11.5px;font-weight:600;letter-spacing:.3px;
+    background:rgba(255,255,255,.8);border-radius:var(--r-pill);padding:3px 10px;margin-bottom:4px;
+  }
+  .mission-title{font-size:21px;font-weight:600;line-height:1.3;}
+  .mission-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+  .chip{
+    display:inline-flex;align-items:center;gap:6px;
+    background:rgba(255,255,255,.85);border-radius:var(--r-pill);
+    padding:6px 12px;font-size:13px;font-weight:500;
+  }
+  .chip b{font-weight:600;}
+  .mission-bottom{padding:16px 18px 18px;}
+  .mission-detail{font-size:13.5px;color:var(--muted);line-height:1.65;}
+  .mission-quote{
+    margin-top:12px;font-size:13px;color:var(--text);
+    background:var(--surface-2);padding:10px 14px;border-radius:var(--r-md);
+    display:flex;gap:8px;line-height:1.55;
+  }
+  .mission-actions{display:flex;gap:10px;margin-top:16px;}
+  .mission-actions .btn{white-space:nowrap;}
+  .mission-actions .btn-primary{flex:1;min-width:0;}
+
+  /* ---------- Stats ---------- */
+  .stats-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .stat-tile{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);
+    box-shadow:var(--shadow-sm);padding:12px;
+  }
+  .stat-top{display:flex;align-items:center;justify-content:space-between;}
+  .stat-label{font-size:11.5px;color:var(--muted);}
+  .stat-emoji{font-size:15px;}
+  .stat-value{font-size:20px;font-weight:600;margin-top:4px;font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .xp-bar-wrap{height:6px;background:var(--surface-2);border-radius:99px;margin-top:8px;overflow:hidden;}
+  .xp-bar-fill{height:100%;background:var(--honey);border-radius:99px;transition:width .6s var(--ease);}
+
+  /* ---------- Progress (mascot + journey) ---------- */
+  .mascot-row{display:flex;align-items:center;gap:14px;}
+  .mascot-emoji{
+    width:58px;height:58px;border-radius:20px;background:var(--honey-soft);
+    display:grid;place-items:center;font-size:30px;flex:none;
+  }
+  .mascot-name{font-size:16px;font-weight:600;}
+  .mascot-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+  .journey{margin-top:22px;}
+  .journey-track{position:relative;height:50px;margin:0 8px;}
+  .journey-line{position:absolute;left:0;right:0;bottom:6px;height:10px;background:var(--surface-2);border-radius:99px;overflow:hidden;}
+  .journey-line-fill{height:100%;background:var(--primary);border-radius:99px;transition:width .8s var(--ease);}
+  .journey-flag{position:absolute;bottom:14px;font-size:18px;line-height:1;}
+  .journey-flag.start{left:-8px;}
+  .journey-flag.finish{right:-10px;}
+  .journey-runner{position:absolute;bottom:14px;font-size:24px;line-height:1;transform:translateX(-50%);transition:left .8s var(--ease);}
+  .journey-runner span{display:inline-block;animation:bob 1.2s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:scaleX(-1) translateY(0);}50%{transform:scaleX(-1) translateY(-3px);}}
+  .journey-pct{font-size:12.5px;color:var(--muted);margin-top:8px;text-align:center;}
+  .fun-distance{
+    margin-top:12px;font-size:12.5px;line-height:1.55;color:var(--text);
+    background:var(--surface-2);border-radius:var(--r-md);padding:10px 12px;
+  }
+  .fun-distance:empty{display:none;}
+
+  /* ---------- Heatmap ---------- */
+  .heatmap-inner{display:flex;flex-direction:column;gap:4px;overflow-x:auto;padding-bottom:4px;}
+  .heatmap-row{display:flex;gap:4px;}
+  .hm-cell{width:18px;height:18px;border-radius:6px;background:var(--rest-soft);flex:none;}
+  .hm-cell.hm-missed{background:var(--rose-soft);}
+  .hm-cell.hm-upcoming{background:var(--surface);box-shadow:inset 0 0 0 1.5px var(--line);}
+  .hm-cell.hm-done.hm-easy{background:var(--easy);}
+  .hm-cell.hm-done.hm-tempo{background:var(--tempo);}
+  .hm-cell.hm-done.hm-interval{background:var(--interval);}
+  .hm-cell.hm-done.hm-long{background:var(--long);}
+  .hm-cell.hm-done.hm-race{background:var(--race);}
+  .heatmap-legend{font-size:11px;color:var(--muted);margin-top:12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+  .heatmap-legend .hm-cell{display:inline-block;width:12px;height:12px;border-radius:4px;vertical-align:middle;}
+
+  /* ---------- Badges ---------- */
+  .badges-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(86px,1fr));gap:8px;}
+  .badge-item{
+    background:var(--honey-soft);border-radius:var(--r-md);
+    padding:12px 6px 10px;text-align:center;
+    transition:transform .2s var(--ease);
+  }
+  .badge-item:hover{transform:translateY(-2px);}
+  .badge-item.locked{background:var(--surface-2);opacity:.5;filter:grayscale(1);}
+  .badge-item .b-icon{font-size:22px;line-height:1.3;}
+  .badge-item .b-name{font-size:11px;font-weight:500;margin-top:4px;line-height:1.3;}
+
+  /* ---------- Plan / week cards ---------- */
+  .plan-head{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:6px 2px 10px;}
+  .plan-head h2{font-size:18px;font-weight:600;}
+  .plan-head p{font-size:12.5px;color:var(--muted);}
+  .legend{display:flex;flex-wrap:wrap;gap:6px 12px;margin:0 2px 12px;font-size:11.5px;color:var(--muted);}
+  .legend span{display:inline-flex;align-items:center;gap:5px;}
+  .legend i{width:9px;height:9px;border-radius:50%;display:inline-block;}
+
+  .week-card{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);
+    box-shadow:var(--shadow-sm);margin-bottom:10px;overflow:hidden;
+    transition:box-shadow .2s;
+  }
+  .week-card.current{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft), var(--shadow-sm);}
+  .week-head{display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;user-select:none;}
+  .week-ring{flex:none;line-height:0;}
+  .week-headline{flex:1;min-width:0;}
+  .wk-num{font-size:15px;font-weight:600;}
+  .wk-phase{font-size:12px;color:var(--muted);}
+  .wk-badges{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;}
+  .tag{font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:var(--r-pill);white-space:nowrap;}
+  .tag-cutback{background:var(--honey-soft);color:#8A6212;}
+  .tag-current{background:var(--primary-soft);color:var(--primary-strong);}
+  .tag-race{background:var(--race-soft);color:#A83C55;}
+  .chevron{
+    width:28px;height:28px;border-radius:50%;background:var(--surface-2);flex:none;
+    display:grid;place-items:center;font-size:12px;color:var(--muted);
+    transition:transform .25s var(--ease);
+  }
+  .week-card.open .chevron{transform:rotate(180deg);}
+
+  .week-body{padding:2px 14px 14px;display:none;}
+  .week-card.open .week-body{display:block;}
+  .week-card.just-opened .week-body{animation:fadeDown .28s var(--ease);}
+  .week-hint{font-size:12px;color:var(--muted);line-height:1.55;margin-bottom:10px;}
+  .week-toolbar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+
+  .bonus-challenge{
+    display:flex;align-items:center;gap:10px;
+    background:var(--honey-soft);border-radius:var(--r-md);padding:10px 12px;margin-bottom:12px;
+  }
+  .bonus-challenge.done{background:var(--sage-soft);}
+  .bonus-icon{font-size:20px;flex:none;}
+  .bonus-text{flex:1;min-width:0;font-size:12px;color:var(--muted);line-height:1.5;}
+  .bonus-text b{display:block;font-size:12.5px;font-weight:600;color:var(--text);}
+  .bonus-check{
+    flex:none;border:none;border-radius:var(--r-pill);padding:7px 12px;font-size:12px;font-weight:600;
+    background:var(--surface);color:#8A6212;white-space:nowrap;
+  }
+  .bonus-check.checked{background:var(--sage);color:#fff;}
+
+  .day-list{display:flex;flex-direction:column;gap:8px;}
+  .day-card{
+    --c:var(--rest); --soft:var(--rest-soft);
+    background:var(--surface-2);border-radius:var(--r-md);padding:8px;
+    box-shadow:inset 4px 0 0 var(--c);
+    transition:background .2s;
+  }
+  .day-card.type-easy{--c:var(--easy);--soft:var(--easy-soft);}
+  .day-card.type-tempo{--c:var(--tempo);--soft:var(--tempo-soft);}
+  .day-card.type-interval{--c:var(--interval);--soft:var(--interval-soft);}
+  .day-card.type-long{--c:var(--long);--soft:var(--long-soft);}
+  .day-card.type-race{--c:var(--race);--soft:var(--race-soft);}
+  .day-card.is-active{background:var(--soft);}
+  .day-card.is-rest{background:transparent;box-shadow:none;border:1.5px dashed var(--line);}
+  .day-card.is-today{outline:2px solid var(--primary);outline-offset:1px;}
+  .dc-top{display:flex;align-items:center;gap:8px;}
+  .dc-day{
+    width:48px;flex:none;text-align:center;border-radius:var(--r-sm);
+    background:var(--surface);padding:5px 2px;line-height:1.25;
+  }
+  .dc-day b{display:block;font-size:13px;font-weight:600;}
+  .dc-day span{font-size:10.5px;color:var(--muted);}
+  .day-card.is-rest .dc-day{background:var(--surface-2);}
+  .day-card.is-done .dc-day{background:var(--sage);color:#fff;}
+  .day-card.is-done .dc-day span{color:rgba(255,255,255,.85);}
+  .today-dot{display:block;font-size:9.5px;font-weight:600;color:var(--primary-strong);}
+  .day-card.is-done .today-dot{color:#fff;}
+
+  .day-select{
+    flex:1;min-width:0;
+    -webkit-appearance:none;appearance:none;
+    font-family:inherit;font-size:16px;color:var(--text);
+    background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%238A796E' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 14px center;
+    border:1px solid var(--line);border-radius:var(--r-pill);
+    padding:10px 36px 10px 14px;
+    text-overflow:ellipsis;
+  }
+  .day-card.is-rest .day-select{color:var(--muted);}
+  .dc-locked{flex:1;min-width:0;font-size:14px;font-weight:600;padding:0 6px;display:flex;align-items:center;gap:6px;}
+  .dc-locked small{font-weight:400;color:var(--muted);font-size:11.5px;}
+  .dc-body{padding:10px 4px 2px 56px;}
+  .dc-detail{font-size:12.5px;color:var(--muted);line-height:1.6;}
+  .dc-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+  .act-btn{
+    border:none;background:var(--surface);color:var(--text);
+    border-radius:var(--r-pill);padding:7px 12px;font-size:12.5px;font-weight:500;
+    display:inline-flex;align-items:center;gap:5px;
+    transition:transform .12s var(--ease), background .15s;
+  }
+  .act-btn:active{transform:scale(.95);}
+  .act-btn.has-note{background:var(--honey-soft);}
+  .act-check{margin-left:auto;background:var(--text);color:#fff;}
+  .act-check.checked{background:var(--sage);}
+  .act-check.pop{animation:pop .45s var(--ease);}
+  .week-total{
+    display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;
+    font-size:12.5px;color:var(--muted);margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);
+  }
+  .week-total b{color:var(--text);font-weight:600;}
+
+  @media (min-width:960px){
+    .day-select{font-size:14px;}
+  }
+
+  /* ---------- Modals ---------- */
+  .modal-backdrop{
+    position:fixed;inset:0;z-index:100;
+    background:rgba(58,46,40,.42);
+    -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
+    display:flex;align-items:flex-end;justify-content:center;
+    animation:fadeIn .2s ease;
+  }
+  .modal-box{
+    background:var(--surface);width:100%;max-width:440px;
+    border-radius:var(--r-xl) var(--r-xl) 0 0;
+    padding:10px 20px calc(20px + env(safe-area-inset-bottom));
+    max-height:90vh;overflow:auto;
+    animation:sheetUp .32s var(--ease);
+  }
+  .modal-box::before{
+    content:'';display:block;width:40px;height:4px;border-radius:99px;background:var(--line);margin:0 auto 14px;
+  }
+  @media (min-width:640px){
+    .modal-backdrop{align-items:center;padding:20px;}
+    .modal-box{border-radius:var(--r-xl);padding:24px;animation:popIn .28s var(--ease);}
+    .modal-box::before{display:none;}
+  }
+  .modal-box h3{font-size:18px;font-weight:600;margin-bottom:4px;}
+  .modal-box p.sub{font-size:13px;color:var(--muted);margin:0 0 16px;line-height:1.55;}
+  .modal-section{padding-top:16px;margin-top:16px;border-top:1px solid var(--line);}
+  .modal-section h4{margin:0 0 10px;font-size:13px;font-weight:600;color:var(--muted);}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:12.5px;font-weight:500;margin-bottom:8px;color:var(--muted);}
+  .time-inputs{display:flex;gap:8px;align-items:center;}
+  .time-inputs input{
+    width:100%;padding:12px 8px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--surface-2);
+    font-size:16px;text-align:center;font-family:inherit;color:var(--text);
+  }
+  .time-inputs span{color:var(--faint);}
+  .modal-actions{display:flex;gap:8px;margin-top:18px;}
+  .modal-actions .btn{flex:1;}
+  .btn-row{display:flex;gap:8px;}
+  .btn-row .btn{flex:1;}
+  .mood-picker{display:flex;gap:8px;}
+  .mood-btn{
+    flex:1;font-size:24px;padding:10px 0;border-radius:var(--r-md);
+    border:1.5px solid var(--line);background:var(--surface);
+    transition:transform .15s var(--ease), background .15s;
+  }
+  .mood-btn.selected{background:var(--primary-soft);border-color:var(--primary);transform:scale(1.05);}
+  textarea{
+    width:100%;padding:12px;border-radius:var(--r-md);border:1px solid var(--line);background:var(--surface-2);
+    font-family:inherit;font-size:16px;color:var(--text);resize:vertical;
+  }
+  .time-chip{display:inline-block;font-size:12px;background:var(--sage-soft);color:var(--sage-strong);border-radius:var(--r-pill);padding:4px 10px;margin-bottom:8px;}
+
+  /* warm-up list */
+  .warmup-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);}
+  .warmup-item:last-child{border-bottom:none;}
+  .warmup-num{
+    flex:none;width:28px;height:28px;border-radius:50%;background:var(--primary-soft);color:var(--primary-strong);
+    font-size:13px;font-weight:600;display:grid;place-items:center;
+  }
+  .warmup-info{flex:1;min-width:0;}
+  .warmup-name{font-size:14px;font-weight:600;}
+  .warmup-duration{display:inline-block;font-size:11.5px;color:var(--sage-strong);background:var(--sage-soft);border-radius:var(--r-pill);padding:2px 8px;margin:4px 0 6px;}
+  .warmup-how{font-size:12.5px;color:var(--muted);line-height:1.6;}
+
+  /* share */
+  .share-preview{text-align:center;margin:6px 0 4px;}
+  #shareCanvas{width:100%;max-width:280px;border-radius:var(--r-md);box-shadow:var(--shadow);background:var(--bg);}
+
+  /* ---------- Toast / confetti ---------- */
+  #toastContainer{
+    position:fixed;top:calc(12px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);
+    z-index:200;display:flex;flex-direction:column;gap:8px;width:min(92vw,380px);pointer-events:none;
+  }
+  .toast{
+    background:var(--text);color:#fff;border-radius:var(--r-md);padding:12px 14px;box-shadow:var(--shadow-lg);
+    display:flex;align-items:center;gap:12px;font-size:13px;
+    animation:toastIn .3s var(--ease);
+  }
+  .toast .t-icon{font-size:22px;}
+  .toast b{display:block;font-size:14px;font-weight:600;}
+  .toast span{color:#E3D6CC;font-size:12px;}
+  #confettiLayer{position:fixed;inset:0;pointer-events:none;z-index:150;overflow:hidden;}
+
+  footer{text-align:center;padding:4px 16px 28px;font-size:12px;color:var(--faint);}
+  input[type=file]{display:none;}
+
+  /* ---------- Motion ---------- */
+  .reveal{animation:rise .5s var(--ease) both;animation-delay:calc(var(--d, 0) * 70ms);}
+  @keyframes rise{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:none;}}
+  @keyframes sheetUp{from{transform:translateY(40px);opacity:.4;}to{transform:none;opacity:1;}}
+  @keyframes popIn{from{transform:scale(.96);opacity:0;}to{transform:none;opacity:1;}}
+  @keyframes toastIn{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:none;}}
+  @keyframes pop{0%{transform:scale(1);}40%{transform:scale(1.12);}100%{transform:scale(1);}}
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-row">
+    <div class="brand">
+      <div class="brand-logo" aria-hidden="true"><span>🏃</span></div>
+      <div>
+        <h1>ภารกิจพิชิตฮาฟมาราธอน</h1>
+        <p id="planSubtitle">แผนซ้อม 13 สัปดาห์ · 21.1 กม.</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" id="btnSound" title="เปิด/ปิดเสียง" aria-label="เปิด/ปิดเสียง">🔊</button>
+      <button class="icon-btn" id="btnSettings" title="ตั้งค่าและข้อมูล" aria-label="ตั้งค่าและข้อมูล">⚙️</button>
+    </div>
+  </div>
+
+  <div class="race-card reveal" style="--d:0">
+    <div>
+      <div class="race-eyebrow" id="countdownLabel">⏳ นับถอยหลังสู่วันแข่ง</div>
+      <div class="race-date">🏁 เสาร์ 26 ธ.ค. 2569</div>
+    </div>
+    <div class="countdown-nums" id="countdownNums">
+      <div class="countdown-unit"><b id="cdDays">--</b><span>วัน</span></div>
+      <div class="countdown-unit"><b id="cdHours">--</b><span>ชม.</span></div>
+      <div class="countdown-unit"><b id="cdMins">--</b><span>นาที</span></div>
+      <div class="countdown-unit"><b id="cdSecs">--</b><span>วินาที</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="layout">
+  <div class="col col-main">
+    <section id="todayMissionWrap" class="reveal" style="--d:1" aria-label="ภารกิจวันนี้"></section>
+
+    <section class="plan-section reveal" style="--d:4">
+      <div class="plan-head">
+        <div>
+          <h2>📅 ตารางซ้อม 13 สัปดาห์</h2>
+          <p>เลือกโปรแกรมให้แต่ละวันได้เอง ใช้ได้ครั้งเดียวต่อสัปดาห์</p>
+        </div>
+        <button class="pill-btn accent" id="btnAutoAll">✨ จัดวันอัตโนมัติทั้งหมด</button>
+      </div>
+      <div class="legend" aria-hidden="true">
+        <span><i style="background:var(--easy)"></i>Easy</span>
+        <span><i style="background:var(--tempo)"></i>Tempo</span>
+        <span><i style="background:var(--interval)"></i>Interval</span>
+        <span><i style="background:var(--long)"></i>Long Run</span>
+        <span><i style="background:var(--race)"></i>Race</span>
+      </div>
+      <div id="weeksContainer"></div>
+    </section>
+  </div>
+
+  <aside class="col col-side">
+    <section class="stats-bar reveal" style="--d:2">
+      <div class="stat-tile">
+        <div class="stat-top"><span class="stat-label">เลเวล</span><span class="stat-emoji">⭐</span></div>
+        <div class="stat-value" id="statLevel">Lv.1</div>
+        <div class="xp-bar-wrap"><div class="xp-bar-fill" id="xpFill" style="width:0%"></div></div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-top"><span class="stat-label">สตรีค</span><span class="stat-emoji">🔥</span></div>
+        <div class="stat-value" id="statStreak">0</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-top"><span class="stat-label">สำเร็จ</span><span class="stat-emoji">✅</span></div>
+        <div class="stat-value" id="statDone">0/0</div>
+      </div>
+    </section>
+
+    <section class="card progress-card reveal" style="--d:3">
+      <div class="mascot-row" id="mascotCard">
+        <div class="mascot-emoji" id="mascotEmoji">🐣</div>
+        <div>
+          <div class="mascot-name" id="mascotName">มือใหม่ไฟแรง</div>
+          <div class="mascot-sub" id="mascotSub">เลเวล 1</div>
+        </div>
+      </div>
+      <div class="journey journey-card">
+        <div class="journey-track">
+          <div class="journey-line"><div class="journey-line-fill" id="journeyFill" style="width:0%"></div></div>
+          <div class="journey-flag start">🏳️</div>
+          <div class="journey-flag finish">🏁</div>
+          <div class="journey-runner" id="journeyRunner" style="left:0%"><span>🏃</span></div>
+        </div>
+        <div class="journey-pct" id="journeyPct">ความคืบหน้า 0%</div>
+        <div class="fun-distance" id="funDistance"></div>
+      </div>
+    </section>
+
+    <section class="card heatmap-card reveal" style="--d:5">
+      <div class="sec-head">
+        <div class="sec-title"><span class="sec-ico">🗓️</span><div>ความสม่ำเสมอ<div class="sec-sub">แถว = จ.–อา. · คอลัมน์ = สัปดาห์ 1–13</div></div></div>
+      </div>
+      <div id="heatmapGrid"></div>
+    </section>
+
+    <section class="card badges-card reveal" style="--d:6">
+      <div class="sec-head">
+        <div class="sec-title"><span class="sec-ico">🏅</span>ตรารางวัล</div>
+      </div>
+      <div class="badges-grid" id="badgesGrid"></div>
+    </section>
+  </aside>
+</main>
+
+<footer>ซ้อมทีละก้าว แล้วพบกันที่เส้นชัย 26 ธ.ค. 2569 🏁</footer>
+
+<!-- Settings Modal -->
+<div class="modal-backdrop hidden" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+  <div class="modal-box">
+    <h3 id="settingsTitle">⚙️ ตั้งค่า</h3>
+    <p class="sub">ใส่เวลาเป้าหมายวันแข่ง ระบบจะคำนวณเพซซ้อมแต่ละแบบให้อัตโนมัติ</p>
+    <div class="field">
+      <label>เวลาเป้าหมาย (ชม. : นาที : วินาที)</label>
+      <div class="time-inputs">
+        <input type="number" inputmode="numeric" id="goalH" min="0" max="9" placeholder="ชม." />
+        <span>:</span>
+        <input type="number" inputmode="numeric" id="goalM" min="0" max="59" placeholder="นาที" />
+        <span>:</span>
+        <input type="number" inputmode="numeric" id="goalS" min="0" max="59" placeholder="วินาที" />
+      </div>
+    </div>
+    <div class="modal-actions" style="margin-top:0;">
+      <button class="btn btn-outline" id="btnCloseSettings">ปิด</button>
+      <button class="btn btn-primary" id="btnSaveSettings">บันทึกเป้าหมาย</button>
+    </div>
+
+    <div class="modal-section">
+      <h4>ข้อมูลความคืบหน้า</h4>
+      <div class="btn-row">
+        <button class="btn btn-outline btn-sm" id="btnExport">⬇️ ส่งออก JSON</button>
+        <button class="btn btn-outline btn-sm" id="btnImportTrigger">⬆️ นำเข้า JSON</button>
+      </div>
+      <input type="file" id="fileImport" accept="application/json" />
+      <p class="sub" style="margin:10px 0 0;font-size:12px;">ข้อมูลเก็บในเบราว์เซอร์นี้เท่านั้น ส่งออกไว้เป็นไฟล์สำรองหรือใช้ย้ายไปเครื่องอื่นได้</p>
+    </div>
+
+    <div class="modal-section">
+      <button class="btn btn-danger btn-block btn-sm" id="btnClearAll">🗑️ ล้างข้อมูลความคืบหน้าทั้งหมด</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Modal (generic) -->
+<div class="modal-backdrop hidden" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+  <div class="modal-box">
+    <h3 id="confirmTitle">ยืนยันการทำรายการ</h3>
+    <p class="sub" id="confirmText"></p>
+    <div class="modal-actions">
+      <button class="btn btn-outline" id="confirmCancel">ยกเลิก</button>
+      <button class="btn btn-primary" id="confirmOk">ยืนยัน</button>
+    </div>
+  </div>
+</div>
+
+<!-- Warm-up Modal -->
+<div class="modal-backdrop hidden" id="warmupModal" role="dialog" aria-modal="true" aria-labelledby="warmupTitle">
+  <div class="modal-box">
+    <h3 id="warmupTitle">🧘 วอร์มอัพก่อนวิ่ง</h3>
+    <span class="time-chip">⏱ ใช้เวลาประมาณ 6–8 นาที</span>
+    <p class="sub">ทำตามลำดับก่อนออกวิ่งทุกครั้ง ช่วยลดการบาดเจ็บและทำให้วิ่งลื่นไหลขึ้น</p>
+    <div id="warmupList"></div>
+    <div class="modal-actions">
+      <button class="btn btn-primary btn-block" id="btnCloseWarmup">พร้อมแล้ว ไปวิ่งกัน 🏃</button>
+    </div>
+  </div>
+</div>
+
+<!-- Note Modal -->
+<div class="modal-backdrop hidden" id="noteModal" role="dialog" aria-modal="true" aria-labelledby="noteTitle">
+  <div class="modal-box">
+    <h3 id="noteTitle">📝 บันทึกหลังวิ่ง</h3>
+    <p class="sub" id="noteModalDate"></p>
+    <div class="field">
+      <label>วันนี้รู้สึกยังไง</label>
+      <div class="mood-picker" id="moodPicker">
+        <button type="button" data-mood="😄" class="mood-btn" aria-label="ดีมาก">😄</button>
+        <button type="button" data-mood="🙂" class="mood-btn" aria-label="ดี">🙂</button>
+        <button type="button" data-mood="😐" class="mood-btn" aria-label="เฉยๆ">😐</button>
+        <button type="button" data-mood="😣" class="mood-btn" aria-label="เหนื่อย">😣</button>
+        <button type="button" data-mood="🤕" class="mood-btn" aria-label="เจ็บ">🤕</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>โน้ตสั้นๆ (ถ้ามี)</label>
+      <textarea id="noteText" rows="3" placeholder="วันนี้วิ่งเป็นไงบ้าง..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" id="btnDeleteNote">ลบโน้ต</button>
+      <button class="btn btn-primary" id="btnSaveNote">บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- Share Week Modal -->
+<div class="modal-backdrop hidden" id="shareModal" role="dialog" aria-modal="true" aria-labelledby="shareTitle">
+  <div class="modal-box" style="max-width:380px;">
+    <h3 id="shareTitle">📤 แชร์สรุปสัปดาห์</h3>
+    <p class="sub">บันทึกเป็นรูปแล้วโพสต์อวดเพื่อนได้เลย</p>
+    <div class="share-preview">
+      <canvas id="shareCanvas" width="600" height="750"></canvas>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" id="btnCloseShare">ปิด</button>
+      <button class="btn btn-primary" id="btnDownloadShare">⬇️ บันทึกรูป</button>
+    </div>
+  </div>
+</div>
+
+<div id="toastContainer" aria-live="polite"></div>
+<div id="confettiLayer"></div>
+
+<script>
+'use strict';
+/* =========================================================================
+   1) ค่าคงที่ / ข้อมูลแผนซ้อม (แผน 3 เดือน / 13 สัปดาห์)
+   ========================================================================= */
+var RACE_DATE = new Date(2026, 11, 26); // 26 ธ.ค. 2569 (เดือนเริ่มที่ 0)
+var TOTAL_WEEKS = 13; // สัปดาห์ที่ 13 = สัปดาห์แข่งขัน, สัปดาห์ 1-12 = สัปดาห์ซ้อม
+var DAY_NAMES = ['จันทร์','อังคาร','พุธ','พฤหัสฯ','ศุกร์','เสาร์','อาทิตย์'];
+var DAY_SHORT = ['จ.','อ.','พ.','พฤ.','ศ.','ส.','อา.'];
+var THAI_MONTHS = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+
+// ตารางแผนซ้อมหลัก (สัปดาห์ 1 ถึง TOTAL_WEEKS-1) — สัปดาห์สุดท้าย (TOTAL_WEEKS) จัดการแยกเป็นกรณีพิเศษ (สัปดาห์แข่งขัน)
+// บีบอัดจาก periodization แบบ 18 สัปดาห์ให้เหลือ 12 สัปดาห์ซ้อม + 1 สัปดาห์แข่ง (รวม 3 เดือนพอดี)
+// จุดสูงสุด (peak long run) ปรับลงมาที่ 18 กม. แทน 19-20 กม. เพื่อความปลอดภัย เนื่องจากมีเวลาสร้างพื้นฐานน้อยกว่าแผน 18 สัปดาห์
+var WEEK_PLANS = [
+  {week:1,  phase:'ปูพื้นฐาน',            cutback:false, longRunKm:6,  easyKm:4, quality:{type:'interval', reps:6, repKm:0.4, recoveryMin:1.5, warmupKm:1.5, cooldownKm:1.5}},
+  {week:2,  phase:'ปูพื้นฐาน',            cutback:false, longRunKm:8,  easyKm:4, quality:{type:'tempo', warmupKm:1.5, tempoKm:3, cooldownKm:1.5}},
+  {week:3,  phase:'ปูพื้นฐาน',            cutback:false, longRunKm:9,  easyKm:5, quality:{type:'interval', reps:8, repKm:0.4, recoveryMin:1.5, warmupKm:1.5, cooldownKm:1.5}},
+  {week:4,  phase:'ปูพื้นฐาน',            cutback:true,  longRunKm:7,  easyKm:4, quality:{type:'tempo', warmupKm:1.5, tempoKm:2.5, cooldownKm:1.5}},
+  {week:5,  phase:'สร้างความแข็งแกร่ง',    cutback:false, longRunKm:10, easyKm:5, quality:{type:'tempo', warmupKm:1.5, tempoKm:4, cooldownKm:1.5}},
+  {week:6,  phase:'สร้างความแข็งแกร่ง',    cutback:false, longRunKm:11, easyKm:6, quality:{type:'interval', reps:6, repKm:0.8, recoveryMin:2, warmupKm:1.5, cooldownKm:1.5}},
+  {week:7,  phase:'สร้างความแข็งแกร่ง',    cutback:false, longRunKm:13, easyKm:6, quality:{type:'tempo', warmupKm:2, tempoKm:5, cooldownKm:2}},
+  {week:8,  phase:'สร้างความแข็งแกร่ง',    cutback:true,  longRunKm:9,  easyKm:5, quality:{type:'interval', reps:5, repKm:0.8, recoveryMin:2, warmupKm:1.5, cooldownKm:1.5}},
+  {week:9,  phase:'เพิ่มระยะพีค',          cutback:false, longRunKm:14, easyKm:6, quality:{type:'tempo', warmupKm:2, tempoKm:6, cooldownKm:2}},
+  {week:10, phase:'เพิ่มระยะพีค',          cutback:false, longRunKm:16, easyKm:7, quality:{type:'interval', reps:5, repKm:1, recoveryMin:2.5, warmupKm:2, cooldownKm:2}},
+  {week:11, phase:'จุดสูงสุด',             cutback:false, longRunKm:18, easyKm:6, quality:{type:'tempo', warmupKm:2, tempoKm:7, cooldownKm:2}},
+  {week:12, phase:'Taper ลดโหลด',         cutback:false, longRunKm:10, easyKm:5, quality:{type:'interval', reps:4, repKm:0.8, recoveryMin:2, warmupKm:1.5, cooldownKm:1.5}}
+];
+var RACE_WEEK_PHASE = 'สัปดาห์แข่งขัน';
+
+var TYPE_META = {
+  easy:     {label:'Easy Run',  icon:'🟢', title:'วิ่งเบาๆ สร้างฐานความอึด'},
+  tempo:    {label:'Tempo Run', icon:'⚡', title:'วิ่งเทมโป ฝึกความเร็วคงที่'},
+  interval: {label:'Interval',  icon:'💨', title:'วิ่งเร็วสลับพัก ฝึกความเร็ว'},
+  long:     {label:'Long Run',  icon:'🌟', title:'วิ่งยาว หัวใจของฮาฟมาราธอน'},
+  race:     {label:'Race Day',  icon:'🏁', title:'วันแข่งจริง!'},
+  rest:     {label:'พักผ่อน',   icon:'😴', title:'วันพัก / Cross-Train'}
+};
+
+var QUOTES = [
+  'ทุกก้าวที่วิ่งวันนี้ คือระยะทางที่เส้นชัยเข้าใกล้ขึ้นอีกนิด',
+  'ไม่ต้องเร็วที่สุด แค่ไม่หยุดก็พอ',
+  'วันนี้เหนื่อยแค่ไหน วันแข่งจะสบายขึ้นเท่านั้น',
+  'ร่างกายไปได้ไกลกว่าที่ใจคิดเสมอ ลองดูสิ',
+  'นักวิ่งที่เก่งที่สุด คือคนที่ไม่ยอมเลิกซ้อม',
+  'เพซช้าวันนี้ ก็ยังเร็วกว่าคนที่นอนอยู่บนโซฟา',
+  'สะสมความสม่ำเสมอ แล้วผลลัพธ์จะสะสมตามมาเอง',
+  'หายใจเข้าลึกๆ ก้าวต่อไปรอเราอยู่',
+  'วันที่ไม่อยากซ้อม คือวันที่ซ้อมแล้วคุ้มค่าที่สุด',
+  'ฮาฟมาราธอนเริ่มจากก้าวแรกที่ประตูบ้านเสมอ',
+  'เหนื่อยได้ แต่อย่าหยุดฝัน',
+  'ทุกสัปดาห์ที่ผ่านไป คือกล้ามเนื้อและใจที่แข็งแกร่งขึ้น',
+  'วิ่งช้าๆ อย่างมีวินัย ดีกว่าวิ่งเร็วแล้วเลิกกลางทาง',
+  'เส้นชัยไม่ได้รอคนที่เร็วที่สุด แต่รอคนที่ไปถึง',
+  'วันนี้ลงทุนกับตัวเอง พรุ่งนี้ร่างกายจะขอบคุณ',
+  'อากาศจะร้อนแค่ไหน ใจที่ร้อนแรงกว่าจะพาไปถึง',
+  'ทุกภารกิจที่ทำสำเร็จ คือ XP ที่สะสมไปสู่เส้นชัยจริง',
+  'อย่ากลัวเพซช้า จงกลัวการไม่ได้ออกไปวิ่ง',
+  'พักผ่อนก็คือส่วนหนึ่งของการซ้อม อย่ารู้สึกผิดที่พัก',
+  'สัปดาห์นี้อาจหนัก แต่สัปดาห์หน้าคุณจะแข็งแกร่งกว่าเดิม',
+  'นับถอยหลังทีละวัน แล้ววันแข่งจะมาถึงเร็วกว่าที่คิด',
+  'ระยะทางไม่โกหก ความพยายามของคุณสะสมอยู่ในทุกกิโล',
+  'บางวันแค่ออกไปวิ่งก็คือชัยชนะแล้ว',
+  'จงภูมิใจกับก้าวเล็กๆ เพราะมันคือฮาฟมาราธอนที่ถูกแบ่งเป็นชิ้นๆ',
+  'ถ้าวันนี้วิ่งได้ วันแข่งคุณก็ทำได้เช่นกัน',
+  'ทุกครั้งที่เหนื่อยแล้วยังก้าวต่อ นั่นคือนักวิ่งตัวจริง',
+  'ให้ร่างกายทำงาน ให้ใจเป็นคนนำทาง',
+  'ความสม่ำเสมอ คือซูเปอร์พาวเวอร์ของนักวิ่งมือใหม่',
+  'สัญญากับตัวเองไว้ แล้วออกไปทำตามสัญญานั้น',
+  'จำไว้ว่าทำไมถึงเริ่ม แล้วก้าวต่อไปจนถึงเส้นชัย',
+  'เวลามีจำกัด แต่ความตั้งใจของคุณไม่มีขีดจำกัด',
+  'แผนสั้นลง แต่ความมุ่งมั่นไม่ได้ลดลงเลย'
+];
+
+var BADGE_DEFS = [
+  {id:'first',       icon:'🥇', name:'ก้าวแรก',          desc:'ทำภารกิจสำเร็จครั้งแรก'},
+  {id:'halfhaf',     icon:'🎯', name:'ครึ่งทางฮาฟ',       desc:'วิ่งยาวครบ 10.5 กม. ในเซสชันเดียว'},
+  {id:'far18',       icon:'🚀', name:'วิ่งไกล 18K+',      desc:'วิ่งยาวครบ 18 กม. ในเซสชันเดียว'},
+  {id:'conquer',     icon:'🏆', name:'พิชิตฮาฟมาราธอน',   desc:'พิชิตเส้นชัย 21.1 กม. ในวันแข่งจริง'},
+  {id:'streak3',     icon:'🔥', name:'สตรีค 3 วัน',       desc:'ทำภารกิจติดต่อกัน 3 ครั้ง'},
+  {id:'streak7',     icon:'🔥🔥', name:'สตรีค 7 วัน',      desc:'ทำภารกิจติดต่อกัน 7 ครั้ง'},
+  {id:'streak14',    icon:'🔥🔥🔥', name:'สตรีคเทพ 14 วัน',  desc:'ทำภารกิจติดต่อกัน 14 ครั้ง'},
+  {id:'perfectWeek', icon:'💯', name:'สัปดาห์เพอร์เฟกต์', desc:'ทำภารกิจครบ 100% ในสัปดาห์เดียว'},
+  {id:'comeback',    icon:'💪', name:'คัมแบ็ค',          desc:'กลับมาทำภารกิจสำเร็จ หลังพลาดติดกัน 3 ครั้ง'},
+  {id:'planner',     icon:'🗓️', name:'นักวางแผน',        desc:'ใช้ปุ่มจัดวันซ้อมอัตโนมัติอย่างน้อย 1 ครั้ง'},
+  {id:'journalist',  icon:'📝', name:'นักบันทึก',        desc:'บันทึกสมุดหลังวิ่งอย่างน้อย 5 ครั้ง'}
+];
+
+// มาสคอตนักวิ่งที่โตขึ้นตามเลเวล
+var MASCOT_TIERS = [
+  {minLevel:1,  emoji:'🐣',       name:'มือใหม่ไฟแรง'},
+  {minLevel:3,  emoji:'🚶',       name:'นักวิ่งฝึกหัด'},
+  {minLevel:5,  emoji:'🏃',       name:'นักวิ่งตัวจริง'},
+  {minLevel:8,  emoji:'🏃‍♂️💨',   name:'สายลมแรง'},
+  {minLevel:12, emoji:'💪🏃',      name:'นักวิ่งพลังเหล็ก'},
+  {minLevel:16, emoji:'🦸',       name:'ฮีโร่นักวิ่ง'},
+  {minLevel:20, emoji:'👑🏃',      name:'ราชานักวิ่ง'}
+];
+
+// ภารกิจเสริมรายสัปดาห์ (สุ่มแบบ deterministic ตามหมายเลขสัปดาห์ ให้ผลเดิมทุกครั้ง)
+var BONUS_CHALLENGES = [
+  'ยืดเหยียดกล้ามเนื้อ 10 นาทีหลังวิ่งทุกครั้งในสัปดาห์นี้',
+  'ดื่มน้ำให้ครบอย่างน้อย 2 ลิตรในวันที่ซ้อม',
+  'นอนให้ได้อย่างน้อย 7 ชั่วโมงในคืนก่อนวันวิ่งยาว',
+  'ลองวิ่งตอนเช้าก่อน 7 โมงสักหนึ่งวัน',
+  'บันทึกความรู้สึกหลังวิ่งยาวของสัปดาห์นี้ในสมุดบันทึก',
+  'เช็กเชือกรองเท้าให้แน่นก่อนออกวิ่งทุกครั้ง',
+  'ลองกินคาร์โบไฮเดรตเพิ่มก่อนวิ่งยาว 1 มื้อ',
+  'งดน้ำอัดลม/ของหวานอย่างน้อย 3 วันในสัปดาห์นี้',
+  'อบอุ่นร่างกาย 5 นาทีก่อนวิ่งทุกครั้ง ไม่มีข้อยกเว้น',
+  'ชวนเพื่อนหรือคนในครอบครัวไปวิ่งด้วยกันสักวัน',
+  'ลองเทคนิคหายใจเข้า 3 ก้าว หายใจออก 3 ก้าว ระหว่างวิ่งเบา',
+  'จดเพซจริงที่วิ่งได้เทียบกับเพซเป้าหมายอย่างน้อย 1 ครั้ง',
+  'พักผ่อนแบบไม่รู้สึกผิดในวันพักของสัปดาห์นี้',
+  'ลองวิ่งเส้นทางใหม่ที่ไม่เคยวิ่งมาก่อนสักครั้ง',
+  'ยิ้มและขอบคุณตัวเองทุกครั้งหลังทำภารกิจสำเร็จ'
+];
+
+// หลักระยะทางสนุกๆ ไว้เทียบระยะทางสะสมที่วิ่งจริง
+var DISTANCE_LANDMARKS = [
+  {km:3.5,  label:'ข้ามสะพานพระราม 8 ไป-กลับ'},
+  {km:16,   label:'รอบเกาะรัตนโกสินทร์ 2 รอบ'},
+  {km:35,   label:'กรุงเทพฯ ถึง นครปฐม'},
+  {km:76,   label:'กรุงเทพฯ ถึง อยุธยา'},
+  {km:150,  label:'กรุงเทพฯ เกือบถึง หัวหิน'},
+  {km:230,  label:'กรุงเทพฯ ถึง หัวหิน'},
+  {km:300,  label:'กรุงเทพฯ ถึง นครราชสีมา'},
+  {km:463,  label:'ครึ่งทาง กรุงเทพฯ-เชียงใหม่'},
+  {km:700,  label:'กรุงเทพฯ ถึง เชียงใหม่'},
+  {km:860,  label:'กรุงเทพฯ ถึง ภูเก็ต'}
+];
+
+// ท่าวอร์มอัพ/ยืดเหยียดแบบเคลื่อนไหว (dynamic) แนะนำให้ทำก่อนวิ่งทุกครั้ง รวมประมาณ 5-10 นาที
+var WARMUP_ROUTINE = [
+  {name:'เดิน/วิ่งเหยาะๆ อยู่กับที่', duration:'1 นาที', how:'ยืนตรง สลับยกเข่าเดินหรือวิ่งเหยาะๆ อยู่กับที่ แกว่งแขนตามจังหวะ ให้หัวใจเริ่มเต้นเร็วขึ้นทีละน้อย'},
+  {name:'แกว่งขาหน้า-หลัง (Leg Swings)', duration:'ข้างละ 30 วินาที', how:'มือแตะผนังหรือจับราวเพื่อทรงตัว แกว่งขาข้างหนึ่งไปข้างหน้าและข้างหลังสลับกันช้าๆ ทำครบแล้วเปลี่ยนข้าง'},
+  {name:'แกว่งขาข้าง (Lateral Leg Swings)', duration:'ข้างละ 30 วินาที', how:'ยืนทรงตัวให้มั่น แกว่งขาข้างหนึ่งผ่านลำตัวไปทางซ้าย-ขวาสลับกัน ทำครบแล้วเปลี่ยนข้าง'},
+  {name:'ยกเข่าสูง (High Knees)', duration:'30 วินาที', how:'วิ่งอยู่กับที่ ยกเข่าขึ้นให้สูงระดับสะโพก แกว่งแขนสวนขาให้เป็นจังหวะ'},
+  {name:'เตะส้นชนก้น (Butt Kicks)', duration:'30 วินาที', how:'วิ่งอยู่กับที่เบาๆ พับเข่าให้ส้นเท้าเตะแตะก้นสลับซ้าย-ขวา'},
+  {name:'หมุนสะโพก (Hip Circles)', duration:'ข้างละ 10 รอบ', how:'มือเท้าเอว หมุนสะโพกเป็นวงกลมช้าๆ ตามเข็มนาฬิกา แล้วสลับทวนเข็ม'},
+  {name:'ก้าวย่อบิดตัว (Walking Lunge with Twist)', duration:'ข้างละ 8-10 ก้าว', how:'ก้าวยาวไปข้างหน้าย่อเข่าให้ตั้งฉากทั้งสองข้าง บิดลำตัวเบาๆ ไปทางขาหน้า แล้วก้าวต่อสลับขา'},
+  {name:'วิ่งเร่งความเร็วสั้นๆ (Strides)', duration:'2-3 เที่ยว x 20-30 เมตร', how:'วิ่งเร่งความเร็วขึ้นเรื่อยๆ จนเกือบเต็มที่ในระยะสั้น แล้วผ่อนความเร็วเดินกลับจุดเริ่มต้น ช่วยกระตุ้นกล้ามเนื้อและระบบประสาทก่อนวิ่งจริง'}
+];
+
+var STORAGE_KEY = 'hmMissionState_v2';
+var memoryStore = {}; // fallback เมื่อ localStorage ใช้ไม่ได้
+
+/* =========================================================================
+   2) Utilities: วันที่ / เพซ / ระยะทาง
+   ========================================================================= */
+function dateOnly(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+function addDays(d, n){ var r = new Date(d); r.setDate(r.getDate()+n); return r; }
+function isoDate(d){
+  var y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), day=String(d.getDate()).padStart(2,'0');
+  return y+'-'+m+'-'+day;
+}
+function thaiDateShort(d){
+  return d.getDate()+' '+THAI_MONTHS[d.getMonth()];
+}
+function thaiBuddhistYear(d){ return d.getFullYear()+543; }
+
+// วันจันทร์ของสัปดาห์แข่งขัน (สัปดาห์สุดท้าย) = วันแข่ง(เสาร์) - 5 วัน
+function getRaceWeekMonday(){ return addDays(dateOnly(RACE_DATE), -5); }
+// วันจันทร์ของสัปดาห์ที่ 1 = ย้อนจากสัปดาห์แข่งขันอีก (TOTAL_WEEKS-1) สัปดาห์
+function getWeek1Monday(){ return addDays(getRaceWeekMonday(), -(TOTAL_WEEKS-1)*7); }
+
+function getMondayOfWeek(weekNum){ return addDays(getWeek1Monday(), (weekNum-1)*7); }
+function getDateForWeekDay(weekNum, dayIndex){ return addDays(getMondayOfWeek(weekNum), dayIndex); }
+
+// คืนค่า {weekNum, dayIndex} ของวันที่ที่กำหนด หรือ null ถ้าอยู่นอกช่วงแผน
+function findWeekDayForDate(d){
+  var target = dateOnly(d);
+  var w1 = getWeek1Monday();
+  var diffDays = Math.round((target - w1) / 86400000);
+  if(diffDays < 0) return null;
+  var weekNum = Math.floor(diffDays/7) + 1;
+  var dayIndex = diffDays % 7;
+  if(weekNum > TOTAL_WEEKS) return null;
+  return {weekNum:weekNum, dayIndex:dayIndex};
+}
+
+function paceSecToStr(sec){
+  if(!isFinite(sec) || sec <= 0) return '--:--';
+  sec = Math.round(sec);
+  var m = Math.floor(sec/60), s = sec % 60;
+  return m + ':' + String(s).padStart(2,'0');
+}
+function secToHMS(totalSec){
+  totalSec = Math.max(0, Math.round(totalSec));
+  var h = Math.floor(totalSec/3600), m = Math.floor((totalSec%3600)/60), s = totalSec%60;
+  return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+
+// คำนวณเพซเป้าหมายของแต่ละประเภทวิ่ง จากเวลาเป้าหมายฮาฟมาราธอน (วินาที) และสัปดาห์ปัจจุบัน
+// เพซของ Tempo/Interval จะ "เร็วขึ้นเรื่อยๆ" ตามสัปดาห์ที่ลึกขึ้น (progress 0 -> 1 ในช่วงสัปดาห์ 1 ถึงสัปดาห์พีค)
+function getPaces(goalTimeSec, weekNum){
+  var racePace = goalTimeSec / 21.1; // วินาที/กม.
+  var peakWeek = TOTAL_WEEKS - 2; // สัปดาห์ก่อน taper ถือเป็นจุดที่ฟิตที่สุด
+  var progress = Math.min(Math.max(weekNum,1), peakWeek) / peakWeek;
+  var tempoOffset = 5 + progress * 10;      // เร็วกว่าเพซแข่ง 5-15 วิ/กม.
+  var intervalOffset = 20 + progress * 20;  // เร็วกว่าเพซแข่ง 20-40 วิ/กม.
+  return {
+    racePace: racePace,
+    easyPace: racePace + 70,
+    longPace: racePace + 55,
+    tempoPace: racePace - tempoOffset,
+    intervalPace: racePace - intervalOffset
+  };
+}
+
+// ป้องกันบั๊ก NaN: workout แบบ interval ไม่มี field km ตรงๆ (มีแต่ reps x repKm)
+// ฟังก์ชันนี้เป็นจุดเดียวที่คำนวณระยะรวมของภารกิจทุกประเภท ต้องเรียกใช้เสมอแทนการอ้าง .km ตรงๆ
+function calcTotalKm(type, detail){
+  detail = detail || {};
+  var km = 0;
+  switch(type){
+    case 'easy': km = Number(detail.km)||0; break;
+    case 'long': km = Number(detail.km)||0; break;
+    case 'race': km = 21.1; break;
+    case 'tempo':
+      km = (Number(detail.warmupKm)||0) + (Number(detail.tempoKm)||0) + (Number(detail.cooldownKm)||0);
+      break;
+    case 'interval':
+      km = (Number(detail.warmupKm)||0) + (Number(detail.cooldownKm)||0) + (Number(detail.reps)||0) * (Number(detail.repKm)||0);
+      break;
+    default: km = 0;
+  }
+  return Math.round(km*10)/10;
+}
+
+function fmtKm(km){
+  if(km == null || isNaN(km)) return '0';
+  return (Math.round(km*10)/10).toString().replace('.0','');
+}
+
+// มาสคอตนักวิ่งตามเลเวลปัจจุบัน
+function getMascotForLevel(level){
+  var best = MASCOT_TIERS[0];
+  MASCOT_TIERS.forEach(function(t){ if(level >= t.minLevel) best = t; });
+  return best;
+}
+
+// ภารกิจเสริมของสัปดาห์นั้นๆ (deterministic ตามหมายเลขสัปดาห์)
+function getBonusChallengeForWeek(weekNum){
+  var str = 'week' + weekNum, hash = 0;
+  for(var i=0;i<str.length;i++){ hash = (hash*31 + str.charCodeAt(i)) >>> 0; }
+  return BONUS_CHALLENGES[hash % BONUS_CHALLENGES.length];
+}
+
+// เทียบระยะทางสะสมที่วิ่งจริงกับหลักระยะทางสนุกๆ
+function getFunDistanceComparison(km){
+  if(!km || km <= 0) return 'เริ่มบันทึกภารกิจแรก แล้วมาดูกันว่าคุณวิ่งไปได้ไกลแค่ไหนแล้ว!';
+  var best = null;
+  for(var i=0;i<DISTANCE_LANDMARKS.length;i++){
+    if(km >= DISTANCE_LANDMARKS[i].km) best = DISTANCE_LANDMARKS[i];
+  }
+  if(!best){
+    var next = DISTANCE_LANDMARKS[0];
+    return '🛣️ สะสมระยะทางไปแล้ว '+fmtKm(km)+' กม. อีก '+fmtKm(next.km-km)+' กม. จะเทียบเท่า '+next.label;
+  }
+  var idx = DISTANCE_LANDMARKS.indexOf(best);
+  var next2 = DISTANCE_LANDMARKS[idx+1];
+  var txt = '🛣️ สะสมระยะทางไปแล้ว '+fmtKm(km)+' กม. เทียบเท่า '+best.label+'!';
+  if(next2){ txt += ' อีก '+fmtKm(next2.km-km)+' กม. ถึง '+next2.label; }
+  return txt;
+}
+
+/* =========================================================================
+   3) State: โหลด/บันทึก ผ่าน localStorage (fallback เป็น memory)
+   ========================================================================= */
+function storageGet(key){
+  try{ return window.localStorage.getItem(key); }
+  catch(e){ return Object.prototype.hasOwnProperty.call(memoryStore,key) ? memoryStore[key] : null; }
+}
+function storageSet(key,val){
+  try{ window.localStorage.setItem(key,val); }
+  catch(e){ memoryStore[key]=val; }
+}
+
+function defaultState(){
+  return {
+    version: 2,
+    goalTimeSec: 2*3600 + 15*60, // ค่าเริ่มต้น 2:15:00
+    weekAssignments: {},  // weekNum(string) -> { dayIndex(string): menuItemId } โปรแกรมที่เลือกไปวิ่งแต่ละวัน
+    completions: {},      // 'YYYY-MM-DD' -> true
+    unlockedBadges: {},   // badgeId -> true
+    bestStreakEver: 0,
+    bonusCompletions: {}, // weekNum(string) -> true (ภารกิจเสริมรายสัปดาห์)
+    notes: {},            // 'YYYY-MM-DD' -> {mood, text} (สมุดบันทึกหลังวิ่ง)
+    soundOn: true,
+    usedAutoSchedule: false
+  };
+}
+
+var state = loadState();
+
+function loadState(){
+  var raw = storageGet(STORAGE_KEY);
+  if(!raw) return defaultState();
+  try{
+    var parsed = JSON.parse(raw);
+    var s = defaultState();
+    // merge อย่างระมัดระวังเผื่อโครงสร้างเก่ากว่า/ไฟล์ import ไม่ครบ
+    for(var k in s){ if(parsed[k] !== undefined) s[k] = parsed[k]; }
+    return s;
+  }catch(e){
+    return defaultState();
+  }
+}
+function saveState(){
+  storageSet(STORAGE_KEY, JSON.stringify(state));
+}
+
+/* =========================================================================
+   4) เมนูโปรแกรมวิ่ง + ตรรกะจัดตารางสัปดาห์
+   ========================================================================= */
+// เมนูโปรแกรมที่เลือกวิ่งได้ของแต่ละสัปดาห์ — แต่ละรายการเลือกใช้ได้ครั้งเดียวต่อสัปดาห์ (เลือกไปแล้วจะถูกขีดทิ้งไม่ให้เลือกซ้ำวันอื่น)
+function getWeekMenu(weekNum){
+  if(weekNum === TOTAL_WEEKS){
+    return [
+      {id:'shakeoutA', type:'easy', detail:{km:2.5, shakeout:true}},
+      {id:'shakeoutB', type:'easy', detail:{km:2.5, shakeout:true}}
+    ];
+  }
+  var plan = WEEK_PLANS[weekNum-1];
+  return [
+    {id:'long',    type:'long',              detail:{km: plan.longRunKm}},
+    {id:'quality', type: plan.quality.type,  detail: plan.quality},
+    {id:'easyA',   type:'easy',              detail:{km: plan.easyKm}},
+    {id:'easyB',   type:'easy',              detail:{km: Math.max(3, plan.easyKm - 1)}}
+  ];
+}
+
+// สร้างตารางซ้อม 7 วันของสัปดาห์หนึ่งๆ จากโปรแกรมที่ผู้ใช้เลือกไว้ในแต่ละวัน (weekAssignments)
+function buildWeekSchedule(weekNum){
+  var days = [];
+  for(var i=0;i<7;i++){
+    days.push({dayIndex:i, date:getDateForWeekDay(weekNum,i), type:'rest', detail:{}, isSelected:false, locked:false, menuItemId:null});
+  }
+  var menu = getWeekMenu(weekNum);
+  var assignments = state.weekAssignments[weekNum] || {};
+
+  if(weekNum === TOTAL_WEEKS){
+    // สัปดาห์แข่งขัน: เสาร์ (index5) = วันแข่งเสมอ, อาทิตย์ (index6) = พักฟื้นเสมอ, ที่เหลือเลือกโปรแกรม shakeout ได้
+    days.forEach(function(day){
+      if(day.dayIndex === 5){
+        day.type = 'race'; day.detail = {}; day.isSelected = true; day.locked = true;
+        return;
+      }
+      if(day.dayIndex === 6){
+        day.type = 'rest'; day.locked = true;
+        return;
+      }
+      var itemId = assignments[day.dayIndex];
+      if(!itemId) return;
+      var item = menu.filter(function(m){ return m.id === itemId; })[0];
+      if(!item) return;
+      day.type = item.type; day.detail = item.detail; day.isSelected = true; day.menuItemId = itemId;
+    });
+    return {plan:{week:weekNum, phase:RACE_WEEK_PHASE, cutback:false, raceWeek:true}, days:days, menu:menu};
+  }
+
+  var plan = WEEK_PLANS[weekNum-1];
+  days.forEach(function(day){
+    var itemId = assignments[day.dayIndex];
+    if(!itemId) return;
+    var item = menu.filter(function(m){ return m.id === itemId; })[0];
+    if(!item) return;
+    day.type = item.type; day.detail = item.detail; day.isSelected = true; day.menuItemId = itemId;
+  });
+  return {plan:plan, days:days, menu:menu};
+}
+
+function applyRecommendedDays(weekNum){
+  var assignments = {};
+  if(weekNum === TOTAL_WEEKS){
+    assignments[1] = 'shakeoutA'; // อังคาร
+    assignments[3] = 'shakeoutB'; // พฤหัสฯ
+  } else {
+    assignments[1] = 'easyA';    // อังคาร
+    assignments[3] = 'quality';  // พฤหัสฯ
+    assignments[4] = 'easyB';    // ศุกร์
+    assignments[6] = 'long';     // อาทิตย์
+  }
+  state.weekAssignments[weekNum] = assignments;
+  state.usedAutoSchedule = true;
+  saveState();
+}
+
+function applyRecommendedDaysAll(){
+  for(var w=1; w<=TOTAL_WEEKS; w++){
+    applyRecommendedDays(w);
+  }
+  saveState();
+}
+
+/* =========================================================================
+   5) XP / เลเวล / สตรีค / ตรารางวัล
+   ========================================================================= */
+var XP_MULT = {easy:8, long:9, tempo:10, interval:12, race:1};
+function calcXP(type, totalKm){
+  if(type === 'race') return 400;
+  var mult = XP_MULT[type] || 0;
+  return Math.round((totalKm||0) * mult);
+}
+
+function getLevelInfo(totalXp){
+  var level = 1, xpNeeded = 150, cum = 0;
+  while(totalXp >= cum + xpNeeded){
+    cum += xpNeeded;
+    level++;
+    xpNeeded = 150 + (level-1)*40;
+  }
+  return {level:level, xpIntoLevel: totalXp - cum, xpNeeded: xpNeeded, totalXp: totalXp};
+}
+
+// รวบรวมภารกิจทุกวันของทั้ง TOTAL_WEEKS สัปดาห์ที่ "มีภารกิจจริง" (ไม่ใช่วันพัก) เรียงตามวันที่
+function getAllScheduledDays(){
+  var all = [];
+  for(var w=1; w<=TOTAL_WEEKS; w++){
+    var sched = buildWeekSchedule(w);
+    sched.days.forEach(function(day){
+      if(day.type !== 'rest'){
+        all.push({weekNum:w, dayIndex:day.dayIndex, date:day.date, type:day.type, detail:day.detail});
+      }
+    });
+  }
+  all.sort(function(a,b){ return a.date - b.date; });
+  return all;
+}
+
+function weekProgress(weekNum){
+  var sched = buildWeekSchedule(weekNum);
+  var total=0, done=0;
+  sched.days.forEach(function(day){
+    if(day.type==='rest') return;
+    total++;
+    if(state.completions[isoDate(day.date)]) done++;
+  });
+  return {total:total, done:done, pct: total>0?Math.round(done/total*100):0};
+}
+
+function computeStats(){
+  var allDays = getAllScheduledDays();
+  var totalMissions = allDays.length;
+  var completedCount = 0, totalXp = 0, maxSingleKm = 0, raceDone = false, totalKmDone = 0;
+  var today = dateOnly(new Date());
+
+  allDays.forEach(function(day){
+    var iso = isoDate(day.date);
+    var totalKm = calcTotalKm(day.type, day.detail);
+    if(state.completions[iso]){
+      completedCount++;
+      totalXp += calcXP(day.type, totalKm);
+      totalKmDone += totalKm;
+      if(totalKm > maxSingleKm) maxSingleKm = totalKm;
+      if(day.type === 'race') raceDone = true;
+    }
+  });
+
+  // XP โบนัสจากภารกิจเสริมรายสัปดาห์ที่ทำสำเร็จ
+  for(var w=1; w<=TOTAL_WEEKS; w++){
+    if(state.bonusCompletions[w]) totalXp += 25;
+  }
+
+  // สตรีคปัจจุบัน: นับจากภารกิจล่าสุดที่ถึงกำหนดแล้ว (วันที่ <= วันนี้) ย้อนหลังไปเรื่อยๆ จนกว่าจะเจอวันที่ยังไม่สำเร็จ
+  var dueDays = allDays.filter(function(d){ return dateOnly(d.date) <= today; });
+  var currentStreak = 0;
+  for(var i=dueDays.length-1; i>=0; i--){
+    var iso2 = isoDate(dueDays[i].date);
+    if(state.completions[iso2]){ currentStreak++; } else { break; }
+  }
+  if(currentStreak > state.bestStreakEver){ state.bestStreakEver = currentStreak; }
+
+  // "คัมแบ็ค": เดินหน้าไล่วันที่ถึงกำหนดแล้ว ถ้าพลาดติดกัน >=3 ครั้งแล้วกลับมาทำสำเร็จ ถือว่าคัมแบ็ค
+  var missedStreak = 0, comebackAchieved = false;
+  dueDays.forEach(function(d){
+    var iso3 = isoDate(d.date);
+    if(state.completions[iso3]){
+      if(missedStreak >= 3) comebackAchieved = true;
+      missedStreak = 0;
+    } else {
+      missedStreak++;
+    }
+  });
+
+  // "สัปดาห์เพอร์เฟกต์": มีสัปดาห์ไหนทำภารกิจครบ 100% บ้างไหม
+  var perfectWeekAchieved = false;
+  for(var w2=1; w2<=TOTAL_WEEKS; w2++){
+    var prog = weekProgress(w2);
+    if(prog.total > 0 && prog.pct === 100){ perfectWeekAchieved = true; break; }
+  }
+
+  var levelInfo = getLevelInfo(totalXp);
+
+  return {
+    totalMissions: totalMissions,
+    completedCount: completedCount,
+    totalXp: totalXp,
+    totalKmDone: totalKmDone,
+    maxSingleKm: maxSingleKm,
+    raceDone: raceDone,
+    currentStreak: currentStreak,
+    bestStreak: state.bestStreakEver,
+    comebackAchieved: comebackAchieved,
+    perfectWeekAchieved: perfectWeekAchieved,
+    journalCount: Object.keys(state.notes).length,
+    level: levelInfo,
+    progressPct: totalMissions>0 ? Math.round(completedCount/totalMissions*100) : 0
+  };
+}
+
+function checkAndUnlockBadges(stats){
+  var newly = [];
+  var checks = {
+    first:       stats.completedCount >= 1,
+    halfhaf:     stats.maxSingleKm >= 10.5,
+    far18:       stats.maxSingleKm >= 18,
+    conquer:     stats.raceDone,
+    streak3:     stats.bestStreak >= 3,
+    streak7:     stats.bestStreak >= 7,
+    streak14:    stats.bestStreak >= 14,
+    perfectWeek: stats.perfectWeekAchieved,
+    comeback:    stats.comebackAchieved,
+    planner:     !!state.usedAutoSchedule,
+    journalist:  stats.journalCount >= 5
+  };
+  BADGE_DEFS.forEach(function(b){
+    if(checks[b.id] && !state.unlockedBadges[b.id]){
+      state.unlockedBadges[b.id] = true;
+      newly.push(b);
+    }
+  });
+  return newly;
+}
+
+/* =========================================================================
+   6) UI: Toast / Confetti / เสียง / สั่น
+   ========================================================================= */
+function showToast(icon, title, sub){
+  var container = document.getElementById('toastContainer');
+  var el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = '<div class="t-icon">'+icon+'</div><div><b>'+title+'</b><span>'+(sub||'')+'</span></div>';
+  container.appendChild(el);
+  setTimeout(function(){
+    el.style.transition = 'opacity .3s, transform .3s';
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(-8px)';
+    setTimeout(function(){ el.remove(); }, 300);
+  }, 3200);
+}
+
+var CONFETTI_COLORS = ['#D9714E','#EEB54B','#7FAE92','#7C9FD0','#F2C4B3'];
+function burstConfetti(x, y){
+  var layer = document.getElementById('confettiLayer');
+  var n = 22;
+  for(var i=0;i<n;i++){
+    var el = document.createElement('div');
+    var size = 5 + Math.random()*5;
+    el.style.position='absolute';
+    el.style.left = x+'px';
+    el.style.top = y+'px';
+    el.style.width = size+'px';
+    el.style.height = size+'px';
+    el.style.background = CONFETTI_COLORS[i % CONFETTI_COLORS.length];
+    el.style.borderRadius = (Math.random()<0.5 ? '50%' : '3px');
+    layer.appendChild(el);
+
+    var angle = Math.random()*Math.PI*2;
+    var dist = 60 + Math.random()*90;
+    var dx = Math.cos(angle)*dist;
+    var dy = Math.sin(angle)*dist - 40;
+    var rot = (Math.random()*360)|0;
+
+    if(el.animate){
+      var anim = el.animate([
+        {transform:'translate(0,0) rotate(0deg)', opacity:1},
+        {transform:'translate('+dx+'px,'+dy+'px) rotate('+rot+'deg)', opacity:0}
+      ], {duration: 700 + Math.random()*400, easing:'cubic-bezier(.2,.7,.3,1)'});
+      anim.onfinish = function(node){ return function(){ node.remove(); }; }(el);
+    } else {
+      setTimeout(function(node){ return function(){ node.remove(); }; }(el), 900);
+    }
+  }
+}
+
+var audioCtx = null;
+function playSuccessSound(){
+  if(!state.soundOn) return;
+  try{
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    var t0 = audioCtx.currentTime;
+    [660, 880].forEach(function(freq, i){
+      var osc = audioCtx.createOscillator();
+      var gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      var start = t0 + i*0.09;
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(0.22, start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.18);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(start);
+      osc.stop(start + 0.2);
+    });
+  }catch(e){ /* เบราว์เซอร์บางตัวอาจไม่รองรับ Web Audio API — ข้ามไปเงียบๆ */ }
+}
+function vibrateSuccess(){
+  try{ if(navigator.vibrate) navigator.vibrate([30,40,30]); }catch(e){}
+}
+
+/* =========================================================================
+   7) Rendering
+   ========================================================================= */
+var elWeeksContainer, elBadgesGrid, elTodayWrap;
+var openWeekIds = {};
+
+function render(){
+  renderTodayMission();
+  var stats = computeStats();
+  renderStatsBar(stats);
+  renderMascot(stats);
+  renderJourney(stats);
+  renderHeatmap();
+  var newBadges = checkAndUnlockBadges(stats);
+  renderBadges();
+  renderWeeks();
+  saveState();
+  newBadges.forEach(function(b){
+    showToast(b.icon, 'ปลดล็อกตรารางวัลใหม่!', b.name);
+  });
+}
+
+function renderCountdown(){
+  var now = new Date();
+  var raceTime = new Date(RACE_DATE.getFullYear(), RACE_DATE.getMonth(), RACE_DATE.getDate(), 6, 0, 0);
+  var diff = raceTime - now;
+  var label = document.getElementById('countdownLabel');
+  if(diff <= 0){
+    var afterDiff = now - raceTime;
+    if(afterDiff < 1000*60*60*24*2){
+      label.textContent = '🏁 วันแข่งมาถึงแล้ว! สู้ๆ สู่เส้นชัยฮาฟมาราธอน';
+    } else {
+      label.textContent = '🎉 ยินดีด้วยที่พิชิตฮาฟมาราธอน 26 ธ.ค. 2569!';
+    }
+    document.getElementById('cdDays').textContent = '00';
+    document.getElementById('cdHours').textContent = '00';
+    document.getElementById('cdMins').textContent = '00';
+    document.getElementById('cdSecs').textContent = '00';
+    return;
+  }
+  var d = Math.floor(diff/86400000);
+  var h = Math.floor((diff%86400000)/3600000);
+  var m = Math.floor((diff%3600000)/60000);
+  var s = Math.floor((diff%60000)/1000);
+  document.getElementById('cdDays').textContent = String(d).padStart(2,'0');
+  document.getElementById('cdHours').textContent = String(h).padStart(2,'0');
+  document.getElementById('cdMins').textContent = String(m).padStart(2,'0');
+  document.getElementById('cdSecs').textContent = String(s).padStart(2,'0');
+  label.textContent = '⏳ นับถอยหลังสู่วันแข่ง';
+}
+
+function getQuoteForToday(){
+  var iso = isoDate(dateOnly(new Date()));
+  var hash = 0;
+  for(var i=0;i<iso.length;i++){ hash = (hash*31 + iso.charCodeAt(i)) >>> 0; }
+  return QUOTES[hash % QUOTES.length];
+}
+
+function renderTodayMission(){
+  elTodayWrap = elTodayWrap || document.getElementById('todayMissionWrap');
+  var today = dateOnly(new Date());
+  var wd = findWeekDayForDate(today);
+  var html = '';
+
+  if(!wd){
+    var w1 = getWeek1Monday();
+    if(today < w1){
+      var daysUntil = Math.round((w1-today)/86400000);
+      html = missionCardShell('🗓️', 'เตรียมตัว', 'แผนซ้อมเริ่มวันที่ '+thaiDateShort(w1)+' (อีก '+daysUntil+' วัน)',
+        'ใช้เวลาตอนนี้ตั้งเป้าหมายเวลาแข่ง แล้วจัดวันซ้อมสัปดาห์แรกไว้ล่วงหน้าได้เลย', '', null, false, TYPE_TINT.tempo, TYPE_TEXT.tempo);
+    } else {
+      html = missionCardShell('🏆', 'จบโปรแกรมแล้ว', 'ยินดีด้วยที่พิชิตฮาฟมาราธอน!', 'หวังว่าจะได้เจอกันอีกในเป้าหมายถัดไป 🎉', '', null, false, TYPE_TINT.easy, TYPE_TEXT.easy);
+    }
+    elTodayWrap.innerHTML = html;
+    return;
+  }
+
+  var sched = buildWeekSchedule(wd.weekNum);
+  var day = sched.days[wd.dayIndex];
+  var meta = TYPE_META[day.type];
+  var iso = isoDate(day.date);
+  var done = !!state.completions[iso];
+  var totalKm = calcTotalKm(day.type, day.detail);
+  var paces = getPaces(state.goalTimeSec, wd.weekNum);
+  var detailText = buildDetailText(day.type, day.detail, totalKm, paces);
+  var colorVar = TYPE_TEXT[day.type];
+  var bgTint = TYPE_TINT[day.type];
+
+  // ชิปสรุปสั้นๆ (ระยะ + เพซ) ให้เห็นตัวเลขสำคัญก่อนอ่านรายละเอียด
+  var chips = '';
+  if(day.type !== 'rest'){
+    var paceKey = {easy:'easyPace', long:'longPace', tempo:'tempoPace', interval:'intervalPace', race:'racePace'}[day.type];
+    chips += '<span class="chip">📏 <b>'+fmtKm(totalKm)+'</b> กม.</span>';
+    chips += '<span class="chip">⏱ <b>'+paceSecToStr(paces[paceKey])+'</b> /กม.</span>';
+    if(day.type === 'interval') chips += '<span class="chip">🔁 <b>'+day.detail.reps+'</b> × '+Math.round(day.detail.repKm*1000)+' ม.</span>';
+  }
+
+  html = missionCardShell(meta.icon, meta.label, dayHeadline(day.type),
+    detailText, getQuoteForToday(), iso, done, bgTint, colorVar, day.type!=='rest', day.type!=='rest', chips);
+
+  elTodayWrap.innerHTML = html;
+
+  var btn = document.getElementById('missionCompleteBtn');
+  if(btn){
+    btn.addEventListener('click', function(ev){
+      toggleCompletion(iso, ev);
+    });
+  }
+  var warmupBtn = document.getElementById('missionWarmupBtn');
+  if(warmupBtn){
+    warmupBtn.addEventListener('click', openWarmupModal);
+  }
+}
+
+function dayHeadline(type){
+  var map = {
+    easy:'วิ่งเบาๆ วันนี้',
+    tempo:'วิ่งเทมโปวันนี้',
+    interval:'อินเทอร์วัลวันนี้',
+    long:'วิ่งยาววันนี้',
+    race:'วันแข่งจริง!',
+    rest:'วันพักผ่อนวันนี้'
+  };
+  return map[type] || '';
+}
+
+// สีพื้นอ่อน/สีตัวอักษรของแต่ละประเภทภารกิจ (โทนอบอุ่น) — ใช้กับการ์ดภารกิจวันนี้
+var TYPE_TINT = {easy:'#E8F3EC', tempo:'#E9F0FA', interval:'#FDF3DC', long:'#FBE9E1', race:'#FBE4EA', rest:'#F4EEE7'};
+var TYPE_TEXT = {easy:'#437A5B', tempo:'#3F6BA8', interval:'#8A6212', long:'#B5563A', race:'#A83C55', rest:'#8A796E'};
+
+function missionCardShell(icon, tag, title, detail, quote, iso, done, bg, colorVar, showBtn, showWarmup, chipsHtml){
+  var todayStr = thaiDateShort(new Date()) + ' ' + thaiBuddhistYear(new Date());
+  var btnHtml = '';
+  if(showBtn || showWarmup){
+    btnHtml = '<div class="mission-actions">';
+    if(showWarmup){
+      btnHtml += '<button class="btn btn-outline" id="missionWarmupBtn">🧘 วอร์มอัพ</button>';
+    }
+    if(showBtn){
+      btnHtml += '<button class="btn btn-primary'+(done?' done':'')+'" id="missionCompleteBtn">'+
+        (done ? '✓ สำเร็จแล้ว เยี่ยมมาก!' : 'ทำภารกิจสำเร็จ') + '</button>';
+    }
+    btnHtml += '</div>';
+  }
+  return '' +
+  '<div class="mission">' +
+    '<div class="mission-top" style="background:'+(bg||'var(--surface-2)')+';">' +
+      '<div class="mission-eyebrow"><h2>ภารกิจวันนี้</h2><span class="date-pill">'+todayStr+'</span></div>' +
+      '<div class="mission-main">' +
+        '<div class="mission-icon">'+icon+'</div>' +
+        '<div style="min-width:0;">' +
+          '<span class="type-pill" style="color:'+(colorVar||'var(--primary-strong)')+';">'+tag+'</span>' +
+          '<div class="mission-title">'+title+'</div>' +
+        '</div>' +
+      '</div>' +
+      (chipsHtml ? '<div class="mission-chips">'+chipsHtml+'</div>' : '') +
+    '</div>' +
+    '<div class="mission-bottom">' +
+      '<div class="mission-detail">'+detail+'</div>' +
+      (quote ? '<div class="mission-quote"><span>💬</span><span>'+quote+'</span></div>' : '') +
+      btnHtml +
+    '</div>' +
+  '</div>';
+}
+
+function buildDetailText(type, detail, totalKm, paces){
+  switch(type){
+    case 'easy':
+      return 'วิ่งเบาๆ '+fmtKm(totalKm)+' กม. เพซแนะนำ ~'+paceSecToStr(paces.easyPace)+' นาที/กม.'+(detail.shakeout?' (Shakeout ก่อนแข่ง)':'');
+    case 'long':
+      return 'วิ่งยาว '+fmtKm(totalKm)+' กม. เพซสบายๆ ~'+paceSecToStr(paces.longPace)+' นาที/กม.';
+    case 'tempo':
+      return 'วอร์มอัพ '+fmtKm(detail.warmupKm)+' กม. + Tempo '+fmtKm(detail.tempoKm)+' กม. (เพซ ~'+paceSecToStr(paces.tempoPace)+' นาที/กม.) + คูลดาวน์ '+fmtKm(detail.cooldownKm)+' กม. — รวม '+fmtKm(totalKm)+' กม.';
+    case 'interval':
+      return 'วอร์มอัพ '+fmtKm(detail.warmupKm)+' กม. + '+detail.reps+' x '+Math.round(detail.repKm*1000)+' ม. (เพซ ~'+paceSecToStr(paces.intervalPace)+' นาที/กม., พักวิ่งจ๊อกกิ้ง '+detail.recoveryMin+' นาที) + คูลดาวน์ '+fmtKm(detail.cooldownKm)+' กม. — รวมประมาณ '+fmtKm(totalKm)+' กม.';
+    case 'race':
+      return '🎉 วันนี้คือวันแข่งจริง! ระยะทาง 21.1 กม. เป้าหมาย '+secToHMS(state.goalTimeSec)+' ชม. (เพซ ~'+paceSecToStr(paces.racePace)+' นาที/กม.) สู้ๆ นะ!';
+    default:
+      return 'วันนี้พักผ่อนเต็มที่ หรือ Cross-Train เบาๆ เช่น ยืดเหยียด ว่ายน้ำ ปั่นจักรยาน';
+  }
+}
+
+function renderStatsBar(stats){
+  document.getElementById('statLevel').textContent = 'Lv.'+stats.level.level;
+  document.getElementById('statStreak').textContent = stats.currentStreak + ' ครั้ง';
+  document.getElementById('statDone').textContent = stats.completedCount+'/'+stats.totalMissions;
+  var pct = stats.level.xpNeeded>0 ? Math.min(100, Math.round(stats.level.xpIntoLevel/stats.level.xpNeeded*100)) : 0;
+  document.getElementById('xpFill').style.width = pct+'%';
+}
+
+function renderMascot(stats){
+  var tier = getMascotForLevel(stats.level.level);
+  var toNext = Math.max(0, stats.level.xpNeeded - stats.level.xpIntoLevel);
+  document.getElementById('mascotEmoji').textContent = tier.emoji;
+  document.getElementById('mascotName').textContent = tier.name;
+  document.getElementById('mascotSub').textContent = 'เลเวล '+stats.level.level+' • อีก '+toNext+' XP สู่เลเวลถัดไป';
+}
+
+function renderJourney(stats){
+  var pct = stats.progressPct;
+  document.getElementById('journeyFill').style.width = pct+'%';
+  document.getElementById('journeyRunner').style.left = pct+'%';
+  document.getElementById('journeyPct').textContent = 'ความคืบหน้า '+pct+'% ('+stats.completedCount+'/'+stats.totalMissions+' ภารกิจ)';
+  document.getElementById('funDistance').textContent = getFunDistanceComparison(stats.totalKmDone);
+}
+
+function renderHeatmap(){
+  var grid = document.getElementById('heatmapGrid');
+  if(!grid) return;
+  var schedules = [];
+  for(var w=1; w<=TOTAL_WEEKS; w++){ schedules.push(buildWeekSchedule(w).days); }
+  var today = dateOnly(new Date());
+  var html = '<div class="heatmap-inner">';
+  for(var d=0; d<7; d++){
+    html += '<div class="heatmap-row">';
+    for(var wi=0; wi<TOTAL_WEEKS; wi++){
+      var day = schedules[wi][d];
+      var cls = 'hm-cell';
+      if(day.type !== 'rest'){
+        var iso = isoDate(day.date);
+        if(state.completions[iso]) cls += ' hm-done hm-'+day.type;
+        else if(dateOnly(day.date) < today) cls += ' hm-missed';
+        else cls += ' hm-upcoming';
+      }
+      html += '<div class="'+cls+'" title="สัปดาห์ '+(wi+1)+' • '+DAY_SHORT[d]+' '+day.date.getDate()+'/'+(day.date.getMonth()+1)+'"></div>';
+    }
+    html += '</div>';
+  }
+  html += '</div>';
+  html += '<div class="heatmap-legend">' +
+    '<span class="hm-cell hm-done hm-easy"></span> เสร็จแล้ว' +
+    '&nbsp;&nbsp;<span class="hm-cell hm-missed"></span> พลาดไป' +
+    '&nbsp;&nbsp;<span class="hm-cell hm-upcoming"></span> ยังไม่ถึงกำหนด' +
+    '&nbsp;&nbsp;<span class="hm-cell"></span> วันพัก' +
+  '</div>';
+  grid.innerHTML = html;
+}
+
+function renderBadges(){
+  elBadgesGrid = elBadgesGrid || document.getElementById('badgesGrid');
+  elBadgesGrid.innerHTML = BADGE_DEFS.map(function(b){
+    var unlocked = !!state.unlockedBadges[b.id];
+    return '<div class="badge-item'+(unlocked?'':' locked')+'" title="'+b.desc+'">' +
+      '<div class="b-icon">'+b.icon+'</div><div class="b-name">'+b.name+'</div></div>';
+  }).join('');
+}
+
+function svgRing(pct, size){
+  size = size||40;
+  var r = size/2 - 4, c = 2*Math.PI*r;
+  var offset = c * (1 - pct/100);
+  var done = pct >= 100;
+  var stroke = done ? '#7FAE92' : '#D9714E';
+  var label = done ? '✓' : pct+'%';
+  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'" aria-label="ความคืบหน้า '+pct+'%">' +
+    '<circle cx="'+size/2+'" cy="'+size/2+'" r="'+r+'" fill="'+(done?'#E6F2EA':'none')+'" stroke="#F2E8DC" stroke-width="4"/>' +
+    '<circle cx="'+size/2+'" cy="'+size/2+'" r="'+r+'" fill="none" stroke="'+stroke+'" stroke-width="4" ' +
+      'stroke-dasharray="'+c+'" stroke-dashoffset="'+offset+'" stroke-linecap="round" ' +
+      'transform="rotate(-90 '+size/2+' '+size/2+')" style="transition:stroke-dashoffset .6s ease"/>' +
+    '<text x="50%" y="53%" text-anchor="middle" dominant-baseline="middle" font-size="'+(done?14:10.5)+'" font-weight="600" fill="'+(done?'#437A5B':'#8A796E')+'" font-family="Prompt, sans-serif">'+label+'</text>' +
+  '</svg>';
+}
+
+// ป้ายชื่อโปรแกรมสำหรับแสดงใน <select> ของแต่ละวัน
+function itemLabel(item){
+  var meta = TYPE_META[item.type];
+  if(item.type === 'easy'){
+    return meta.icon+' Easy Run '+fmtKm(item.detail.km)+' กม.'+(item.detail.shakeout?' (Shakeout)':'');
+  }
+  if(item.type === 'long'){
+    return meta.icon+' Long Run '+fmtKm(item.detail.km)+' กม.';
+  }
+  if(item.type === 'tempo'){
+    return meta.icon+' Tempo Run รวม '+fmtKm(calcTotalKm('tempo', item.detail))+' กม.';
+  }
+  if(item.type === 'interval'){
+    return meta.icon+' Interval '+item.detail.reps+' x '+Math.round(item.detail.repKm*1000)+' ม.';
+  }
+  return meta.icon+' '+meta.label;
+}
+
+// เติมตัวขีดฆ่าด้วย Unicode combining character (U+0336) เพื่อให้ "ขีดทิ้ง" รายการที่เลือกไปแล้ว
+// ได้แม้อยู่ใน <option> ของ native select ซึ่งไม่รองรับ CSS text-decoration ในทุกอุปกรณ์
+function strikeText(str){
+  return str.split('').map(function(ch){ return ch + '̶'; }).join('');
+}
+
+// สร้างตัวเลือกโปรแกรมของวันนั้นๆ: โปรแกรมที่ถูกเลือกไปวันอื่นในสัปดาห์เดียวกันแล้วจะถูกขีดทิ้งและกดเลือกซ้ำไม่ได้
+function buildDaySelectOptions(menu, assignments, day){
+  var restSelected = !day.menuItemId ? ' selected' : '';
+  var html = '<option value=""'+restSelected+'>😴 พักผ่อน / ไม่วิ่งวันนี้</option>';
+  menu.forEach(function(item){
+    var usedByOther = false;
+    for(var idx in assignments){
+      if(parseInt(idx,10) !== day.dayIndex && assignments[idx] === item.id){ usedByOther = true; break; }
+    }
+    var label = itemLabel(item);
+    if(usedByOther){
+      html += '<option value="'+item.id+'" disabled>'+strikeText(label)+' (เลือกไปแล้ว)</option>';
+    } else {
+      var sel = day.menuItemId === item.id ? ' selected' : '';
+      html += '<option value="'+item.id+'"'+sel+'>'+label+'</option>';
+    }
+  });
+  return html;
+}
+
+// การ์ดของแต่ละวันในสัปดาห์: แถวบน = วัน + ตัวเลือกโปรแกรม (หรือป้ายที่ล็อกไว้), แถวล่าง = รายละเอียด + ปุ่มลัด
+// ใช้ทั้งวันที่ผู้ใช้เลือกโปรแกรมเอง และวันแข่ง/วันพักฟื้นที่ล็อกไว้ในสัปดาห์แข่งขัน
+function dayRowHtml(day, meta, iso, totalKm, doneChecked, detailTxt, topControlHtml, isToday){
+  var isRest = day.type === 'rest';
+  var cls = 'day-card type-'+day.type + (isRest ? ' is-rest' : ' is-active') +
+            (doneChecked && !isRest ? ' is-done' : '') + (isToday ? ' is-today' : '');
+  var html = '<div class="'+cls+'">';
+  html += '<div class="dc-top">';
+  html += '<div class="dc-day"><b>'+DAY_SHORT[day.dayIndex]+'</b><span>'+day.date.getDate()+'/'+(day.date.getMonth()+1)+'</span>' +
+          (isToday ? '<span class="today-dot">วันนี้</span>' : '') + '</div>';
+  if(topControlHtml){
+    html += topControlHtml;
+  } else if(isRest){
+    html += '<div class="dc-locked">😴 '+detailTxt+' <small>🔒</small></div>';
+  } else {
+    html += '<div class="dc-locked">'+meta.icon+' '+meta.label+' · '+fmtKm(totalKm)+' กม. <small>🔒</small></div>';
+  }
+  html += '</div>';
+
+  if(!isRest){
+    var note = state.notes[iso];
+    var noteCls = note ? ' has-note' : '';
+    var noteTxt = note ? ((note.mood || '📝') + ' บันทึกแล้ว') : '📝 บันทึก';
+    html += '<div class="dc-body">';
+    html += '<div class="dc-detail">'+detailTxt+'</div>';
+    html += '<div class="dc-actions">';
+    html += '<button class="act-btn" data-warmupday="1" title="ดูท่าวอร์มอัพก่อนวิ่ง">🧘 วอร์มอัพ</button>';
+    html += '<button class="act-btn'+noteCls+'" data-noteday="'+iso+'" title="บันทึกความรู้สึกหลังวิ่ง">'+noteTxt+'</button>';
+    html += '<button class="act-btn act-check'+(doneChecked?' checked':'')+'" data-checkday="'+iso+'" aria-pressed="'+(doneChecked?'true':'false')+'">' +
+            (doneChecked ? '✓ สำเร็จ' : 'ทำสำเร็จ') + '</button>';
+    html += '</div></div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderWeeks(){
+  elWeeksContainer = elWeeksContainer || document.getElementById('weeksContainer');
+  var today = dateOnly(new Date());
+  var todayIso = isoDate(today);
+  var curWd = findWeekDayForDate(today);
+  var curWeek = curWd ? curWd.weekNum : null;
+  // ถ้ายังไม่มี "สัปดาห์ปัจจุบัน" (ยังไม่เริ่มแผน หรือจบแผนไปแล้ว) ให้เปิดสัปดาห์ที่เกี่ยวข้องที่สุดแทน
+  var defaultOpenWeek = curWeek || (today < getWeek1Monday() ? 1 : TOTAL_WEEKS);
+
+  var html = '';
+  for(var w=1; w<=TOTAL_WEEKS; w++){
+    var sched = buildWeekSchedule(w);
+    var prog = weekProgress(w);
+    var isOpen = openWeekIds[w] !== undefined ? openWeekIds[w] : (w === defaultOpenWeek);
+    var mon = getMondayOfWeek(w), sun = addDays(mon,6);
+    var tags = '';
+    if(w === curWeek) tags += '<span class="tag tag-current">สัปดาห์นี้</span>';
+    if(sched.plan.cutback) tags += '<span class="tag tag-cutback">Cutback</span>';
+    if(sched.plan.raceWeek) tags += '<span class="tag tag-race">แข่งขัน</span>';
+
+    html += '<div class="week-card'+(isOpen?' open':'')+(w===curWeek?' current':'')+'" data-week="'+w+'">';
+    html += '<div class="week-head" data-toggle="'+w+'" role="button" aria-expanded="'+(isOpen?'true':'false')+'">';
+    html += '<div class="week-ring">'+svgRing(prog.pct, 44)+'</div>';
+    html += '<div class="week-headline"><div class="wk-num">สัปดาห์ '+w+'</div>' +
+            '<div class="wk-phase">'+sched.plan.phase+' · '+thaiDateShort(mon)+' – '+thaiDateShort(sun)+'</div></div>';
+    html += '<div class="wk-badges">'+tags+'</div>';
+    html += '<div class="chevron" aria-hidden="true">▾</div>';
+    html += '</div>';
+
+    html += '<div class="week-body">';
+    if(sched.plan.raceWeek){
+      html += '<p class="week-hint">🏁 วันเสาร์คือวันแข่ง (ล็อกไว้) เลือกได้เฉพาะวิ่ง Shakeout เบาๆ ก่อนแข่ง แนะนำ อ. และ พฤ.</p>';
+    } else {
+      html += '<p class="week-hint">เลือกโปรแกรมในวันที่ว่าง โปรแกรมที่ใช้ไปแล้วจะถูก<s>ขีดทิ้ง</s>ในวันอื่นของสัปดาห์นี้</p>';
+    }
+    html += '<div class="week-toolbar"><button class="pill-btn" data-recommend="'+w+'">✨ ใช้วันแนะนำ</button></div>';
+
+    var bonusDone = !!state.bonusCompletions[w];
+    html += '<div class="bonus-challenge'+(bonusDone?' done':'')+'">' +
+      '<div class="bonus-icon">🎁</div>' +
+      '<div class="bonus-text"><b>ภารกิจเสริม (ไม่บังคับ)</b><span>'+getBonusChallengeForWeek(w)+'</span></div>' +
+      '<button class="bonus-check'+(bonusDone?' checked':'')+'" data-bonuscheck="'+w+'">'+(bonusDone?'✓ สำเร็จ':'+25 XP')+'</button>' +
+    '</div>';
+
+    var paces = getPaces(state.goalTimeSec, w);
+    var weekKmTotal = 0;
+    var assignments = state.weekAssignments[w] || {};
+    html += '<div class="day-list">';
+    sched.days.forEach(function(day){
+      var totalKm = calcTotalKm(day.type, day.detail);
+      weekKmTotal += totalKm;
+      var iso = isoDate(day.date);
+      var meta = TYPE_META[day.type];
+      var isToday = iso === todayIso;
+      var doneChecked = !!state.completions[iso];
+
+      if(day.locked){
+        // วันแข่ง/วันพักฟื้นของสัปดาห์แข่งขัน — ล็อกไว้ ไม่มี select ให้เลือก
+        var detailTxtL = day.type==='rest' ? 'พักฟื้นหลังแข่ง' : buildDetailText(day.type, day.detail, totalKm, paces);
+        html += dayRowHtml(day, meta, iso, totalKm, doneChecked, detailTxtL, null, isToday);
+        return;
+      }
+
+      var selectHtml = '<select class="day-select" aria-label="เลือกโปรแกรมวัน'+DAY_NAMES[day.dayIndex]+'" data-assignselect="'+w+'_'+day.dayIndex+'">' +
+                       buildDaySelectOptions(sched.menu, assignments, day) + '</select>';
+      var detailTxt = day.menuItemId ? buildDetailText(day.type, day.detail, totalKm, paces) : '';
+      html += dayRowHtml(day, meta, iso, totalKm, doneChecked, detailTxt, selectHtml, isToday);
+    });
+    html += '</div>';
+    html += '<div class="week-total"><span>รวมสัปดาห์นี้ ~<b>'+fmtKm(weekKmTotal)+' กม.</b> · สำเร็จ '+prog.done+'/'+prog.total+'</span>' +
+            '<button class="pill-btn" data-share="'+w+'">📤 แชร์สรุป</button></div>';
+
+    html += '</div></div>'; // week-body, week-card
+  }
+  elWeeksContainer.innerHTML = html;
+  bindWeekEvents();
+}
+
+function bindWeekEvents(){
+  Array.prototype.forEach.call(document.querySelectorAll('[data-toggle]'), function(el){
+    el.addEventListener('click', function(){
+      var w = el.getAttribute('data-toggle');
+      var card = document.querySelector('.week-card[data-week="'+w+'"]');
+      var nowOpen = !card.classList.contains('open');
+      openWeekIds[w] = nowOpen;
+      card.classList.toggle('open', nowOpen);
+      card.classList.toggle('just-opened', nowOpen); // เล่นแอนิเมชันเปิดเฉพาะตอนผู้ใช้กดเอง ไม่เล่นซ้ำตอน re-render
+      el.setAttribute('aria-expanded', nowOpen ? 'true' : 'false');
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-assignselect]'), function(el){
+    el.addEventListener('change', function(){
+      var parts = el.getAttribute('data-assignselect').split('_');
+      var w = parseInt(parts[0],10), d = parseInt(parts[1],10);
+      var val = el.value;
+      var assignments = state.weekAssignments[w] || {};
+      if(val){ assignments[d] = val; } else { delete assignments[d]; }
+      state.weekAssignments[w] = assignments;
+      openWeekIds[w] = true;
+      saveState();
+      render();
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-warmupday]'), function(el){
+    el.addEventListener('click', function(ev){
+      ev.stopPropagation();
+      openWarmupModal();
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-recommend]'), function(el){
+    el.addEventListener('click', function(){
+      var w = parseInt(el.getAttribute('data-recommend'),10);
+      applyRecommendedDays(w);
+      openWeekIds[w] = true;
+      render();
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-checkday]'), function(el){
+    el.addEventListener('click', function(ev){
+      var iso = el.getAttribute('data-checkday');
+      toggleCompletion(iso, ev);
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-bonuscheck]'), function(el){
+    el.addEventListener('click', function(){
+      var w = parseInt(el.getAttribute('data-bonuscheck'),10);
+      var willComplete = !state.bonusCompletions[w];
+      if(willComplete){ state.bonusCompletions[w] = true; } else { delete state.bonusCompletions[w]; }
+      saveState();
+      if(willComplete){
+        var rect = el.getBoundingClientRect();
+        burstConfetti(rect.left+rect.width/2, rect.top+rect.height/2);
+        playSuccessSound();
+        vibrateSuccess();
+      }
+      openWeekIds[w] = true;
+      render();
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-noteday]'), function(el){
+    el.addEventListener('click', function(ev){
+      ev.stopPropagation();
+      openNoteModal(el.getAttribute('data-noteday'));
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-share]'), function(el){
+    el.addEventListener('click', function(ev){
+      ev.stopPropagation();
+      var w = parseInt(el.getAttribute('data-share'),10);
+      openShareModal(w);
+    });
+  });
+}
+
+function toggleCompletion(iso, ev){
+  var willComplete = !state.completions[iso];
+  var beforeLevel = computeStats().level.level; // เลเวลก่อนเปลี่ยนสถานะภารกิจนี้
+
+  if(willComplete){ state.completions[iso] = true; }
+  else{ delete state.completions[iso]; }
+  saveState();
+
+  if(willComplete && ev){
+    var rect = (ev.target.closest ? ev.target.closest('button') : ev.target).getBoundingClientRect();
+    burstConfetti(rect.left+rect.width/2, rect.top+rect.height/2);
+    playSuccessSound();
+    vibrateSuccess();
+  }
+  render();
+  if(willComplete){
+    // เด้งปุ่มของภารกิจที่เพิ่งทำสำเร็จเล็กน้อย
+    var popBtn = document.querySelector('[data-checkday="'+iso+'"]');
+    if(popBtn) popBtn.classList.add('pop');
+    var afterLevel = computeStats().level.level;
+    if(afterLevel > beforeLevel){
+      showToast('⭐','เลเวลอัพ!','ตอนนี้คุณคือ Lv.'+afterLevel);
+    }
+  }
+}
+
+/* =========================================================================
+   8) Settings modal / Export / Import / Clear
+   ========================================================================= */
+function openModal(id){ document.getElementById(id).classList.remove('hidden'); }
+function closeModal(id){ document.getElementById(id).classList.add('hidden'); }
+
+function initSettingsModal(){
+  document.getElementById('btnSettings').addEventListener('click', function(){
+    var h = Math.floor(state.goalTimeSec/3600);
+    var m = Math.floor((state.goalTimeSec%3600)/60);
+    var s = state.goalTimeSec%60;
+    document.getElementById('goalH').value = h;
+    document.getElementById('goalM').value = m;
+    document.getElementById('goalS').value = s;
+    openModal('settingsModal');
+  });
+  document.getElementById('btnCloseSettings').addEventListener('click', function(){ closeModal('settingsModal'); });
+  document.getElementById('btnSaveSettings').addEventListener('click', function(){
+    var h = parseInt(document.getElementById('goalH').value,10) || 0;
+    var m = parseInt(document.getElementById('goalM').value,10) || 0;
+    var s = parseInt(document.getElementById('goalS').value,10) || 0;
+    var total = h*3600 + m*60 + s;
+    if(total < 3000) total = 3000; // กันค่าประหลาด ต่ำสุด ~50 นาที
+    state.goalTimeSec = total;
+    saveState();
+    closeModal('settingsModal');
+    render();
+  });
+  document.getElementById('btnClearAll').addEventListener('click', function(){
+    closeModal('settingsModal');
+    showConfirm('ล้างข้อมูลทั้งหมด?', 'การกระทำนี้จะลบวันที่เลือก ความคืบหน้า XP และตรารางวัลทั้งหมด ย้อนกลับไม่ได้', function(){
+      state = defaultState();
+      saveState();
+      render();
+      showToast('🗑️','ล้างข้อมูลเรียบร้อย','เริ่มต้นใหม่ได้เลย');
+    });
+  });
+}
+
+function showConfirm(title, text, onOk){
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmText').textContent = text;
+  openModal('confirmModal');
+  var okBtn = document.getElementById('confirmOk');
+  var cancelBtn = document.getElementById('confirmCancel');
+  function cleanup(){
+    okBtn.removeEventListener('click', okHandler);
+    cancelBtn.removeEventListener('click', cancelHandler);
+    closeModal('confirmModal');
+  }
+  function okHandler(){ cleanup(); onOk(); }
+  function cancelHandler(){ cleanup(); }
+  okBtn.addEventListener('click', okHandler);
+  cancelBtn.addEventListener('click', cancelHandler);
+}
+
+function initExportImport(){
+  document.getElementById('btnExport').addEventListener('click', function(){
+    var blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'half-marathon-progress-'+isoDate(new Date())+'.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+    showToast('⬇️','ส่งออกไฟล์แล้ว','บันทึกไฟล์ JSON ความคืบหน้าเรียบร้อย');
+  });
+  document.getElementById('btnImportTrigger').addEventListener('click', function(){
+    document.getElementById('fileImport').click();
+  });
+  document.getElementById('fileImport').addEventListener('change', function(ev){
+    var file = ev.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(e){
+      try{
+        var parsed = JSON.parse(e.target.result);
+        var merged = defaultState();
+        for(var k in merged){ if(parsed[k] !== undefined) merged[k] = parsed[k]; }
+        state = merged;
+        saveState();
+        render();
+        showToast('⬆️','นำเข้าข้อมูลสำเร็จ','โหลดความคืบหน้าจากไฟล์เรียบร้อย');
+      }catch(err){
+        showToast('⚠️','นำเข้าไม่สำเร็จ','ไฟล์ไม่ถูกต้องหรือเสียหาย');
+      }
+      ev.target.value = '';
+    };
+    reader.readAsText(file);
+  });
+}
+
+/* =========================================================================
+   8.5) วอร์มอัพก่อนวิ่ง (Warm-up modal)
+   ========================================================================= */
+function renderWarmupList(){
+  var el = document.getElementById('warmupList');
+  if(!el) return;
+  el.innerHTML = WARMUP_ROUTINE.map(function(w, i){
+    return '<div class="warmup-item"><div class="warmup-num">'+(i+1)+'</div><div class="warmup-info">' +
+      '<div class="warmup-name">'+w.name+'</div>' +
+      '<div class="warmup-duration">⏱ '+w.duration+'</div>' +
+      '<div class="warmup-how">'+w.how+'</div>' +
+    '</div></div>';
+  }).join('');
+}
+function openWarmupModal(){ openModal('warmupModal'); }
+function initWarmupModal(){
+  renderWarmupList();
+  document.getElementById('btnCloseWarmup').addEventListener('click', function(){ closeModal('warmupModal'); });
+}
+
+/* =========================================================================
+   9) สมุดบันทึกหลังวิ่ง (Note modal)
+   ========================================================================= */
+var noteModalIso = null, noteModalMood = null;
+
+function openNoteModal(iso){
+  noteModalIso = iso;
+  var note = state.notes[iso] || {};
+  noteModalMood = note.mood || null;
+  document.getElementById('noteModalDate').textContent = iso;
+  document.getElementById('noteText').value = note.text || '';
+  updateMoodPickerUI();
+  openModal('noteModal');
+}
+function updateMoodPickerUI(){
+  Array.prototype.forEach.call(document.querySelectorAll('.mood-btn'), function(btn){
+    btn.classList.toggle('selected', btn.getAttribute('data-mood') === noteModalMood);
+  });
+}
+function initNoteModal(){
+  Array.prototype.forEach.call(document.querySelectorAll('.mood-btn'), function(btn){
+    btn.addEventListener('click', function(){
+      var m = btn.getAttribute('data-mood');
+      noteModalMood = (noteModalMood === m) ? null : m;
+      updateMoodPickerUI();
+    });
+  });
+  document.getElementById('btnSaveNote').addEventListener('click', function(){
+    if(!noteModalIso) return;
+    var text = document.getElementById('noteText').value.trim();
+    if(!noteModalMood && !text){
+      delete state.notes[noteModalIso];
+    } else {
+      state.notes[noteModalIso] = {mood: noteModalMood, text: text};
+    }
+    saveState();
+    closeModal('noteModal');
+    render();
+  });
+  document.getElementById('btnDeleteNote').addEventListener('click', function(){
+    if(!noteModalIso) return;
+    delete state.notes[noteModalIso];
+    saveState();
+    closeModal('noteModal');
+    render();
+  });
+}
+
+/* =========================================================================
+   10) การ์ดสรุปสัปดาห์แบบแชร์ได้ (Canvas)
+   ========================================================================= */
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+}
+// วาดข้อความไทยแบบตัดบรรทัดตามความกว้าง (ตัดทีละตัวอักษร เพราะภาษาไทยไม่มีช่องว่างระหว่างคำเสมอไป)
+function wrapTextCanvas(ctx, text, x, y, maxWidth, lineHeight){
+  // ถ้าเบราว์เซอร์รองรับ Intl.Segmenter จะตัดตาม "คำ" ภาษาไทย ไม่งั้นค่อยตัดทีละตัวอักษร
+  var pieces;
+  try{
+    var seg = new Intl.Segmenter('th', {granularity:'word'});
+    pieces = Array.from(seg.segment(text), function(x){ return x.segment; });
+  }catch(e){ pieces = text.split(''); }
+  var lines = [], current = '';
+  for(var i=0;i<pieces.length;i++){
+    var test = current + pieces[i];
+    if(ctx.measureText(test).width > maxWidth && current.length > 0){
+      lines.push(current);
+      current = pieces[i].replace(/^\s+/, '');
+    } else {
+      current = test;
+    }
+  }
+  if(current) lines.push(current);
+  var startY = y - (lines.length-1)*lineHeight/2;
+  lines.forEach(function(line, idx){ ctx.fillText(line, x, startY + idx*lineHeight); });
+}
+
+function drawWeekShareCard(weekNum){
+  var canvas = document.getElementById('shareCanvas');
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height;
+  var sched = buildWeekSchedule(weekNum);
+  var prog = weekProgress(weekNum);
+
+  var totalKm = 0, xpThisWeek = 0;
+  sched.days.forEach(function(d){
+    var km = calcTotalKm(d.type, d.detail);
+    totalKm += km;
+    var iso = isoDate(d.date);
+    if(d.type !== 'rest' && state.completions[iso]) xpThisWeek += calcXP(d.type, km);
+  });
+  if(state.bonusCompletions[weekNum]) xpThisWeek += 25;
+
+  // พื้นหลังโทนครีม + วงกลมตกแต่งนุ่มๆ (สไตล์ Cute Minimal)
+  ctx.fillStyle = '#FBF6EF';
+  ctx.fillRect(0,0,W,H);
+  ctx.fillStyle = '#FBE8DF';
+  ctx.beginPath(); ctx.arc(560, 40, 150, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#FDF2DA';
+  ctx.beginPath(); ctx.arc(30, 730, 130, 0, Math.PI*2); ctx.fill();
+
+  // การ์ดขาวด้านใน
+  ctx.fillStyle = '#FFFFFF';
+  roundRect(ctx, 40, 40, 520, 670, 36); ctx.fill();
+  ctx.strokeStyle = '#EFE4D7'; ctx.lineWidth = 2;
+  roundRect(ctx, 40, 40, 520, 670, 36); ctx.stroke();
+
+  ctx.textAlign = 'center';
+  var mon = getMondayOfWeek(weekNum), sun = addDays(mon,6);
+
+  ctx.fillStyle = '#8A796E';
+  ctx.font = '500 19px Prompt, sans-serif';
+  ctx.fillText('🏃 ภารกิจพิชิตฮาฟมาราธอน', W/2, 100);
+
+  ctx.fillStyle = '#3A2E28';
+  ctx.font = '600 40px Prompt, sans-serif';
+  ctx.fillText('สัปดาห์ '+weekNum, W/2, 160);
+  ctx.fillStyle = '#8A796E';
+  ctx.font = '400 18px Prompt, sans-serif';
+  ctx.fillText(sched.plan.phase+' · '+thaiDateShort(mon)+' – '+thaiDateShort(sun)+' '+thaiBuddhistYear(mon), W/2, 195);
+
+  ctx.fillStyle = '#B5563A';
+  ctx.font = '600 88px Prompt, sans-serif';
+  ctx.fillText(fmtKm(totalKm), W/2, 310);
+  ctx.fillStyle = '#8A796E';
+  ctx.font = '400 18px Prompt, sans-serif';
+  ctx.fillText('ระยะทางรวมสัปดาห์นี้ (กม.)', W/2, 345);
+
+  // กล่องสถิติ 2 ช่อง
+  ctx.fillStyle = '#FAF3EA';
+  roundRect(ctx, 80, 380, 210, 100, 22); ctx.fill();
+  roundRect(ctx, 310, 380, 210, 100, 22); ctx.fill();
+  ctx.fillStyle = '#8A796E';
+  ctx.font = '400 16px Prompt, sans-serif';
+  ctx.fillText('ภารกิจสำเร็จ', 185, 414);
+  ctx.fillText('XP ที่ได้', 415, 414);
+  ctx.fillStyle = '#3A2E28';
+  ctx.font = '600 34px Prompt, sans-serif';
+  ctx.fillText(prog.done+' / '+prog.total, 185, 460);
+  ctx.fillText('+'+xpThisWeek, 415, 460);
+
+  // แถบความคืบหน้า
+  var barW = 440, barX = (W-barW)/2, barY = 510;
+  ctx.fillStyle = '#F2E8DC';
+  roundRect(ctx, barX, barY, barW, 14, 7); ctx.fill();
+  ctx.fillStyle = prog.pct >= 100 ? '#7FAE92' : '#D9714E';
+  var fillW = Math.max(14, barW * (prog.pct/100));
+  roundRect(ctx, barX, barY, fillW, 14, 7); ctx.fill();
+  ctx.fillStyle = '#8A796E';
+  ctx.font = '400 17px Prompt, sans-serif';
+  ctx.fillText(prog.pct+'% ของภารกิจสัปดาห์นี้', W/2, 552);
+
+  ctx.fillStyle = '#3A2E28';
+  ctx.font = '400 19px Prompt, sans-serif';
+  wrapTextCanvas(ctx, '“'+getQuoteForToday()+'”', W/2, 612, 440, 28);
+
+  ctx.fillStyle = '#B9AA9E';
+  ctx.font = '500 16px Prompt, sans-serif';
+  ctx.fillText('ฮาฟมาราธอน 21.1 กม. · 26 ธ.ค. 2569', W/2, 680);
+}
+
+function openShareModal(weekNum){
+  openModal('shareModal');
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(function(){ drawWeekShareCard(weekNum); });
+  }
+  requestAnimationFrame(function(){ drawWeekShareCard(weekNum); });
+  document.getElementById('btnDownloadShare').onclick = function(){
+    var canvas = document.getElementById('shareCanvas');
+    var url = canvas.toDataURL('image/png');
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'week-'+weekNum+'-summary.png';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+}
+function initShareModal(){
+  document.getElementById('btnCloseShare').addEventListener('click', function(){ closeModal('shareModal'); });
+}
+
+/* =========================================================================
+   11) เสียงตอบรับ (เปิด/ปิด)
+   ========================================================================= */
+function initSoundToggle(){
+  var btn = document.getElementById('btnSound');
+  function updateIcon(){ btn.textContent = state.soundOn ? '🔊' : '🔇'; }
+  updateIcon();
+  btn.addEventListener('click', function(){
+    state.soundOn = !state.soundOn;
+    saveState();
+    updateIcon();
+    showToast(state.soundOn?'🔊':'🔇', state.soundOn?'เปิดเสียงแล้ว':'ปิดเสียงแล้ว', '');
+  });
+}
+
+/* =========================================================================
+   12) Init
+   ========================================================================= */
+function init(){
+  initSettingsModal();
+  initExportImport();
+  initWarmupModal();
+  initNoteModal();
+  initShareModal();
+  initSoundToggle();
+  document.getElementById('btnAutoAll').addEventListener('click', function(){
+    showConfirm('จัดวันซ้อมอัตโนมัติทั้งหมด?', 'ระบบจะแนะนำวันซ้อมให้ทุกสัปดาห์ตามค่าเริ่มต้น (ทับวันที่เคยเลือกไว้)', function(){
+      applyRecommendedDaysAll();
+      render();
+      showToast('✨','จัดวันซ้อมอัตโนมัติแล้ว','ปรับได้ทุกสัปดาห์ตามใจต่อจากนี้');
+    });
+  });
+
+  // แตะพื้นหลังมืด หรือกด Esc เพื่อปิดหน้าต่าง (ยกเว้นหน้าต่างยืนยัน ที่ต้องกดเลือกเองเท่านั้น)
+  var dismissible = ['settingsModal','warmupModal','noteModal','shareModal'];
+  dismissible.forEach(function(id){
+    var el = document.getElementById(id);
+    el.addEventListener('click', function(ev){ if(ev.target === el) closeModal(id); });
+  });
+  document.addEventListener('keydown', function(ev){
+    if(ev.key !== 'Escape') return;
+    dismissible.forEach(function(id){ closeModal(id); });
+  });
+
+  renderCountdown();
+  setInterval(renderCountdown, 1000);
+  render();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
